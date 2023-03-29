@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../partials/header')%>
+    <title>New activity</title>
+  </head>
+  <body>
+    <%- include('../../partials/navbar')%>
+
+    <div class="container h-100">
+      <div class="row justify-content-center align-items-center m-lg-5">
+        <div class="card col-10 bg-dark h-150px">
+          <div class="row g-0">
+            <div
+              id="movie-img"
+              class="col-12 col-lg-3"
+              style="max-width: 14rem"
+            ></div>
+            <div class="col-12 col-lg-6 mx-3">
+              <div id="movie-info" class="card-body d-flex flex-column h-100">
+                <!-- <div class="card-text mt-auto text-end"><small class="text-muted">Last updated 3 mins ago</small></div> -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div
+              class="btn-group btn-group-toggle"
+              id="release-date-selection"
+              data-toggle="buttons"
+            ></div>
+            <div id="movie-schedule"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal new activity form -->
+    <div
+      class="modal modal-md fade"
+      id="modal"
+      tabindex="-1"
+      aria-labelledby="modalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark" id="modal-content">
+          <div class="modal-header mx-2">
+            <h5 class="modal-title" id="modalLabel">New activity</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form method="POST" id="activity-form" class="needs-validation">
+            <div class="modal-body mx-3" id="modal-body">
+              <div class="mb-3">
+                <input id="form-scheduleId" name="form-scheduleId" hidden />
+                <label class="form-label" for="form-title">Title</label>
+                <input
+                  type="text"
+                  id="form-title"
+                  name="form-title"
+                  class="form-control"
+                  maxlength="20"
+                />
+              </div>
+              <div class="mb-1">
+                <label class="form-label" for="form-maxMembers"
+                  >Max members</label
+                >
+                <input
+                  type="range"
+                  id="form-maxMembers"
+                  name="form-maxMembers"
+                  value="2"
+                  min="2"
+                  max="8"
+                  oninput="this.nextElementSibling.value = this.value"
+                />
+                <output>2</output>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <label class="form-label" for="form-date">Date</label>
+                  <input
+                    type="text"
+                    id="form-date"
+                    name="form-date"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="col">
+                  <label class="form-label" for="form-time">Time</label>
+                  <input
+                    type="text"
+                    id="form-time"
+                    name="form-time"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label class="form-label" for="form-city">City</label>
+                  <input
+                    type="text"
+                    id="form-city"
+                    name="form-city"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="col-8">
+                  <label class="form-label" for="form-theater">Theater</label>
+                  <input
+                    type="text"
+                    id="form-theater"
+                    name="form-theater"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-center mb-2">
+                <img id="preview-img" width="180" height="256" />
+              </div>
+              <div class="row">
+                <div class="mb-3">
+                  <input type="file" id="upload-img"class="rounded-3"
+                  targetID="preview-img" accept="image/gif, image/jpeg,
+                  image/png"/ >
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="form-description"
+                  >Description</label
+                ><br />
+                <textarea
+                  id="form-description"
+                  form="activity-form"
+                  name="form-description"
+                  class="form-control"
+                  rows="5"
+                  cols="50"
+                ></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-light"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" id="submit" class="btn btn-secondary">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-msg">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark" id="modal-content">
+          <div
+            class="modal-body d-flex justify-content-center"
+            id="modal-msg-body"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script type="module" src="/js/movie/movie_info.js"></script>
+  </body>
+</html>

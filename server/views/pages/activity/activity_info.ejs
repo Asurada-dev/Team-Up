@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../partials/header')%>
+    <title>Activity Information</title>
+  </head>
+  <body>
+    <%- include('../../partials/navbar')%>
+
+    <div class="container h-100">
+      <div class="row justify-content-center align-items-center m-lg-5">
+        <div class="card col-10 bg-dark h-150px">
+          <div class="row g-0">
+            <div class="col-12 col-lg-3" id="activity-img"></div>
+            <div class="col-12 col-lg-8 mx-3">
+              <div class="card-body" id="activity-info"></div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-12">
+                <p class="card-text fs-6" id="activity-description"></p>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-end">
+            <button
+              type="submit"
+              class="btn btn-secondary"
+              data-bs-toggle="modal"
+              data-bs-target="#modal"
+            >
+              Join!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark" id="modal-content">
+          <div class="modal-body d-flex justify-content-center fs-2">
+            確定加入此活動嗎?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-light btn-time-width"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-secondary btn-time-width"
+              data-bs-dismiss="modal"
+              id="joinButton"
+            >
+              Join!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-msg">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark" id="modal-content">
+          <div
+            class="modal-body d-flex justify-content-center"
+            id="modal-msg-body"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script type="module" src="/js/activity/activity_info.js"></script>
+  </body>
+</html>

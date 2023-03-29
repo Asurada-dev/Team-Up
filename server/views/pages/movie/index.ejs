@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../partials/header')%>
+    <title>New activity</title>
+  </head>
+  <body>
+    <%- include('../../partials/navbar')%>
+
+    <div class="container-sm">
+      <div class="row">
+        <h2 class="mt-5">上映中</h2>
+        <div
+          class="d-flex flex-row flex-nowrap overflow-auto mb-5"
+          id="new-movie"
+        ></div>
+        <h2 class="mt-5">本周新片</h2>
+        <div class="d-flex flex-row flex-nowrap overflow-auto mb-5">
+          <%- include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%><%-
+          include('../../partials/movie_card')%>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script type="module" src="/js/movie/movie.js"></script>
+  </body>
+</html>
