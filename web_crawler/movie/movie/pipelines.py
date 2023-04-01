@@ -32,11 +32,11 @@ class MovieIdPipeline:
           title TEXT
         );
         """)
-        self.cur.execute("TRUNCATE TABLE movie CASCADE;")
+        # self.cur.execute("TRUNCATE TABLE movie CASCADE;")
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(""" INSERT INTO movie (id, title) values (%s,%s)""", (
+        self.cur.execute("""INSERT INTO movie (id, title) values (%s,%s);""", (
             item["id"],
             item["title"]
         ))
@@ -61,7 +61,7 @@ class MovieCityPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(""" INSERT INTO city (id, name) values (%s, %s)""", (
+        self.cur.execute("""INSERT INTO city (id, name) values (%s, %s);""", (
             item["id"],
             item["name"]
         ))
@@ -89,7 +89,7 @@ class MovieTheaterPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(""" INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s)""", (
+        self.cur.execute("""INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);""", (
             item["id"],
             item["name"],
             item["address"],
@@ -117,7 +117,7 @@ class MovieSchedulePipeline:
             kind TEXT
         );
         """)
-        self.cur.execute("TRUNCATE TABLE movie_schedule;")
+        # self.cur.execute("TRUNCATE TABLE movie_schedule;")
         self.connection.commit()
 
     def process_item(self, item, spider):
@@ -127,7 +127,7 @@ class MovieSchedulePipeline:
             item["date"],
             item["time"], 
             item["kind"])
-        self.cur.execute(""" INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s)""", (
+        self.cur.execute("""INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s);""", (
             item["movie_id"],
             item["theater_id"],
             str(item["date"]),
@@ -158,11 +158,11 @@ class MovieInfoPipeline:
             img TEXT
         );
         """)
-        self.cur.execute("TRUNCATE TABLE movie_info;")
+        # self.cur.execute("TRUNCATE TABLE movie_info;")
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(""" INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime, distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s )""", (
+        self.cur.execute("""INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime, distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""", (
         item["movie_id"],
         item["title"],
         item["title_en"],
