@@ -7,10 +7,16 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 import psycopg2
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+db_password = os.getenv("POSTGRESQL_SECRET")
+
 
 class Postgres:
     username = 'postgres'
-    password = 'Bullet000731'
+    password = db_password
     hostname = 'localhost'
     database = 'teamup'
     def connect(self):
