@@ -53,7 +53,16 @@ async function pageLoad() {
   const id = window.location.href.split('/').reverse()[0];
 
   const { data } = await axios.get(`/api/v1/movie/${id}`);
-  const releaseDate = await axios.get(`/api/v1/movie/movie-release-date/${id}`);
+  const allReleaseDate = await axios.get(
+    `/api/v1/movie/movie-release-date/${id}`
+  );
+  const today = new Date();
+
+  const releaseDate = allReleaseDate.data.filter(
+    (e) => new Date(e.date) > new Date()
+  );
+  console.log(releaseDate);
+
   defaultImg = data.img;
 
   movieInfo.insertAdjacentHTML(
@@ -74,7 +83,7 @@ async function pageLoad() {
 
   previewImg.setAttribute('src', data.img);
   let releaseDateArray = [];
-  releaseDate.data.forEach((element) => releaseDateArray.push(element.date));
+  releaseDate.forEach((element) => releaseDateArray.push(element.date));
   releaseDateArray.forEach((element) => {
     movieReleaseDateSelection.insertAdjacentHTML(
       'beforeend',
@@ -88,6 +97,7 @@ movieReleaseDateSelection.addEventListener('click', async function (element) {
   const schedule = await axios.get(
     `/api/v1/movie/movie-schedule/${id}?date=${element.target.value}`
   );
+  console.log(schedule);
 
   const citySet = new Set();
   const theaterSet = new Set();

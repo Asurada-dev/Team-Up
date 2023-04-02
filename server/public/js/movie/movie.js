@@ -4,7 +4,12 @@ window.onload = pageLoad;
 
 async function pageLoad() {
   const { data } = await axios.get('/api/v1/movie');
-  data.forEach((element) => {
+  const today = moment();
+  const inTheaterMovie = data.filter((element) =>
+    moment(element.update_time).isSame(today, 'day')
+  );
+
+  inTheaterMovie.forEach((element) => {
     newMovie.insertAdjacentHTML(
       'beforeend',
       `<div class="card card-block mx-2 mb-2 bg-dark" style="min-width: 14rem">

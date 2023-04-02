@@ -39,14 +39,22 @@ class MovieIdPipeline:
         );
         """)
         # self.cur.execute("TRUNCATE TABLE movie CASCADE;")
+        self.cur.execute("SELECT id FROM movie")
+        rows = self.cur.fetchall()
+
+        self.ids_in_database = list(row[0] for row in rows)
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute("""INSERT INTO movie (id, title) values (%s,%s);""", (
-            item["id"],
-            item["title"]
-        ))
+        if int(item["id"]) in self.ids_in_database:
+            self.cur.execute("""UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);""",(item["id"],))
+        else:
+            self.cur.execute("""INSERT INTO movie (id, title, update_time) values (%s, %s, CURRENT_TIMESTAMP);""", (
+                item["id"],
+                item["title"]
+            ))
         self.connection.commit()
+
         return item
 
 class MovieCityPipeline:
