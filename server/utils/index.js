@@ -4,6 +4,7 @@ const checkPermissions = require('./check_permissions');
 const sendVerificationEmail = require('./send_verification_email');
 const sendResetPasswordEmail = require('./send_reset_password_email');
 const createHash = require('./create_hash');
+const checkIsActivityMember = require('./check_is_activity_member');
 
 module.exports = {
   createJWT,
@@ -14,4 +15,5 @@ module.exports = {
   sendVerificationEmail,
   sendResetPasswordEmail,
   createHash,
+  checkIsActivityMember,
 };
