@@ -8,6 +8,7 @@
 from itemadapter import ItemAdapter
 import psycopg2
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -132,23 +133,24 @@ class MovieSchedulePipeline:
         );
         """)
         # self.cur.execute("TRUNCATE TABLE movie_schedule;")
+        self.cur.execute("SELECT movie_id, date FROM movie_schedule;")
+        rows = self.cur.fetchall()
+
+        self.date_in_database = rows
+
         self.connection.commit()
 
     def process_item(self, item, spider):
-        print('---')
-        print(item["movie_id"],
-            item["theater_id"],
-            item["date"],
-            item["time"], 
-            item["kind"])
-        self.cur.execute("""INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s);""", (
-            item["movie_id"],
-            item["theater_id"],
-            str(item["date"]),
-            str(item["time"]), 
-            str(item["kind"])
-        ))
-        self.connection.commit()
+        if(item["movie_id"],datetime.strptime(item["date"], '%Y-%m-%d').date()) not in self.date_in_database:
+            print('notIn')
+            self.cur.execute("""INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s);""", (
+                item["movie_id"],
+                item["theater_id"],
+                str(item["date"]),
+                str(item["time"]), 
+                str(item["kind"])
+            ))
+            self.connection.commit()
         return item
 
 class MovieInfoPipeline:
@@ -173,20 +175,26 @@ class MovieInfoPipeline:
         );
         """)
         # self.cur.execute("TRUNCATE TABLE movie_info;")
+        self.cur.execute("SELECT movie_id FROM movie_info")
+        rows = self.cur.fetchall()
+
+        self.ids_in_database = list(row[0] for row in rows)
+
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute("""INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime, distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""", (
-        item["movie_id"],
-        item["title"],
-        item["title_en"],
-        item["release_date"],
-        item["runtime"],
-        item["distributor"],
-        item["imdb_score"],
-        item["img"],
-        ))
-        self.connection.commit()
+        if int(item["movie_id"]) not in self.ids_in_database:
+            self.cur.execute("""INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime, distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""", (
+            item["movie_id"],
+            item["title"],
+            item["title_en"],
+            item["release_date"],
+            item["runtime"],
+            item["distributor"],
+            item["imdb_score"],
+            item["img"],
+            ))
+            self.connection.commit()
         return item
 
 
