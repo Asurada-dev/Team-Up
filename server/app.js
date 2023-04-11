@@ -1,9 +1,14 @@
 require('dotenv').config();
 require('express-async-errors');
 
+const http = require('http');
 // express framework
 const express = require('express');
 const app = express();
+
+// socket.IO
+const server = http.createServer(app);
+require('./socketIO')(server);
 
 //packages
 const cors = require('cors');
@@ -26,8 +31,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(fileUpload());
-const { authenticateUser } = require('./middlewares/authentication');
+
 // middleware
+const { authenticateUser } = require('./middlewares/authentication');
 const errorHandlerMiddleware = require('./middlewares/error_handler');
 const notFoundMiddleware = require('./middlewares/not_found');
 
@@ -50,6 +56,7 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => {
+
+server.listen(port, () => {
   console.log(`listening ${port}`);
 });
