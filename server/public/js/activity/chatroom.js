@@ -23,6 +23,27 @@ async function pageLoad() {
   const userId = user.user.userId;
   const userName = user.user.name;
 
+  const chatLog = await axios.get(`/api/v1/activity/chat-log/${activityId}`);
+  chatLog.data.forEach((element) => {
+    chatRoom.insertAdjacentHTML(
+      'beforeend',
+      `
+        <div class="chat-message-${
+          user.name === element.name ? 'right' : 'left'
+        } pb-4">
+            <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
+                <div class="badge bg-dark text-nowrap mb-1">${
+                  element.name
+                }</div>
+                    <span class="small text-end text-nowrap mt-2">${
+                      element.send_time
+                    }</span>
+                <div class="message">${element.message}</div>
+            </div>
+        </div>`
+    );
+  });
+
   // Chatroom
   socket.emit('joinRoom', { userId, userName, activityId });
 
@@ -62,11 +83,11 @@ function outputMessage(message) {
   chatRoom.insertAdjacentHTML(
     'beforeend',
     `<div class="chat-message-right pb-4">
-        <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
-            <div class="badge bg-dark text-nowrap mb-1">Name</div>
-                <span class="small text-end text-nowrap mt-2">Time</span>
-            <div class="message">${message}</div>
-        </div>
-    </div>`
+            <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
+                <div class="badge bg-dark text-nowrap mb-1">${message.userName}</div>
+                    <span class="small text-end text-nowrap mt-2">${message.time}</span>
+                <div class="message">${message.text}</div>
+            </div>
+        </div>`
   );
 }

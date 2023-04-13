@@ -132,6 +132,16 @@ const getActivityMembers = async (req, res) => {
   res.status(StatusCodes.OK).json(activityMembers);
 };
 
+const getChatLog = async (req, res) => {
+  const { id: activityId } = req.params;
+  const activityQuery = await pool.query(
+    "SELECT users.name, cm.message, to_char(cm.send_time, 'YYYY-MM-DD HH24:MI') AS send_time FROM chatroom_message AS cm JOIN users ON cm.member_id=users.id WHERE cm.activity_id=$1 ORDER BY cm.send_time",
+    [activityId]
+  );
+  const chatLogs = activityQuery.rows;
+  res.status(StatusCodes.OK).json(chatLogs);
+};
+
 module.exports = {
   createActivity,
   uploadActivityImage,
@@ -141,4 +151,5 @@ module.exports = {
   getActivityMembers,
   updateActivity,
   deleteActivity,
+  getChatLog,
 };

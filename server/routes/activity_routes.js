@@ -9,12 +9,14 @@ const {
   getActivityMembers,
   updateActivity,
   deleteActivity,
+  getChatLog,
 } = require('../controllers/activity_controller');
 
 const { authenticateUser } = require('../middlewares/authentication');
 
 router.get('/', getAllActivities);
 router.get('/members/:id', authenticateUser, getActivityMembers);
+router.get('/chat-log/:id', authenticateUser, getChatLog);
 router.get('/:id', getSingleActivity);
 router.post('/', authenticateUser, createActivity);
 router.post('/upload-image', authenticateUser, uploadActivityImage);
