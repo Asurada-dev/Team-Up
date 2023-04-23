@@ -47,11 +47,14 @@ async function pageLoad() {
   // Chatroom
   socket.emit('joinRoom', { userId, userName, activityId });
 
-  socket.on('online', (userId) => {
-    const member = document.getElementById(`member-${userId}`);
-    member.innerHTML = '・Online';
-    member.classList.add('chat-online');
-    member.classList.remove('chat-offline');
+  socket.on('online', (userList) => {
+    console.log(userList);
+    userList.forEach((userId) => {
+      const member = document.getElementById(`member-${userId}`);
+      member.innerHTML = '・Online';
+      member.classList.add('chat-online');
+      member.classList.remove('chat-offline');
+    });
   });
 
   socket.on('offline', (userId) => {

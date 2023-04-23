@@ -4,6 +4,7 @@ const { formatMessage } = require('./utils');
 
 module.exports = (server) => {
   const io = socketio(server);
+  const userList = {};
 
   io.on('connection', (socket) => {
     socket.on('joinRoom', ({ userId, userName, activityId }) => {
@@ -13,7 +14,10 @@ module.exports = (server) => {
 
       socket.join(socket.room);
 
-      io.to(socket.room).emit('online', userId);
+      if (!userList[socket.room]) userList[socket.room] = [];
+      userList[socket.room].push(userId);
+
+      io.to(socket.room).emit('online', userList[socket.room]);
     });
 
     socket.on('chatMessage', async (message) => {
@@ -28,6 +32,15 @@ module.exports = (server) => {
     });
 
     socket.on('disconnect', () => {
+      if (userList[socket.room]) {
+        const index = userList[socket.room].indexOf(socket.userId);
+        if (index !== -1) {
+          userList[socket.room].splice(index, 1);
+          if (userList[socket.room].length === 0) {
+            delete userList[socket.room];
+          }
+        }
+      }
       io.to(socket.room).emit('offline', socket.userId);
     });
   });
