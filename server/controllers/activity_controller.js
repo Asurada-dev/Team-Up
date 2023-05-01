@@ -3,6 +3,7 @@ const pool = require('../db/connectDB');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const path = require('path');
+
 const createActivity = async (req, res) => {
   const leaderId = req.user.userId;
 
@@ -53,7 +54,7 @@ const getAllActivities = async (req, res) => {
     `
   );
   const allActivities = activityQuery.rows;
-  // console.log(activityQuery);
+
   res.status(StatusCodes.OK).json(allActivities);
 };
 
@@ -122,6 +123,20 @@ const joinActivity = async (req, res) => {
     .json({ msg: 'Success! You have joined the activity. Have fun!' });
 };
 
+const leaveActivity = async (req, res) => {
+  const { id: activityId } = req.params;
+  const userId = req.user.userId;
+
+  await pool.query(
+    'DELETE FROM activity_member WHERE activity_id=$1 AND member_id=$2',
+    [activityId, userId]
+  );
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: 'Success! You have left the activity.' });
+};
+
 const getActivityMembers = async (req, res) => {
   const { id: activityId } = req.params;
   const activityQuery = await pool.query(
@@ -142,14 +157,27 @@ const getChatLog = async (req, res) => {
   res.status(StatusCodes.OK).json(chatLogs);
 };
 
+const getCurrentMemberRole = async (req, res) => {
+  const { id: activityId } = req.params;
+  const userId = req.user.userId;
+  const activtyQuery = await pool.query(
+    'SELECT role FROM activity_member WHERE activity_id=$1 AND member_id=$2',
+    [activityId, userId]
+  );
+  const role = activtyQuery.rows[0];
+  res.status(StatusCodes.OK).json(role);
+};
+
 module.exports = {
   createActivity,
   uploadActivityImage,
   joinActivity,
+  leaveActivity,
   getAllActivities,
   getSingleActivity,
   getActivityMembers,
   updateActivity,
   deleteActivity,
   getChatLog,
+  getCurrentMemberRole,
 };

@@ -5,26 +5,27 @@ const joinActivityModal = new bootstrap.Modal(
   document.getElementById('modal'),
   {}
 );
-const joinButton = document.getElementById('joinButton');
+const msgModal = new bootstrap.Modal(document.getElementById('modal-msg'), {});
+const joinButton = document.getElementById('button-join');
 
 window.onload = pageLoad;
 
 joinButton.addEventListener('click', async (event) => {
-  const id = window.location.href.split('/').reverse()[0];
+  const activityId = window.location.href.split('/').reverse()[0];
   const {
     data: { msg },
-  } = await axios.post(`/api/v1/activity/${id}`);
-  console.log(msg);
-  let msgModal = new bootstrap.Modal(document.getElementById('modal-msg'), {});
+  } = await axios.post(`/api/v1/activity/${activityId}`);
+
   msgModal.show();
   document.getElementById('modal-msg-body').innerHTML = msg;
 });
 
 async function pageLoad() {
-  const id = window.location.href.split('/').reverse()[0];
+  const activityId = window.location.href.split('/').reverse()[0];
 
-  const { data } = await axios.get(`/api/v1/activity/${id}`);
-  console.log(data);
+  const { data } = await axios.get(`/api/v1/activity/${activityId}`);
+  const members = await axios.get(`/api/v1/activity/members/${activityId}`);
+
   activityDescription.innerHTML = data.description;
   activityInfo.insertAdjacentHTML(
     'beforeend',
@@ -37,7 +38,9 @@ async function pageLoad() {
     <p class="card-text fs-5" id="activity-location">${data.city} - ${
       data.theater_name
     }</p>
-    <p class="card-text fs-5" id="member">人數 (2/${data.max_member})</p>
+    <p class="card-text fs-5" id="member">人數 (${members.data.length}/${
+      data.max_member
+    })</p>
     <div class="card-text mt-auto text-end">
         <small class="text-muted" id="post-time"
             >活動建立時間:${new Date(data.create_time).toLocaleString(
@@ -57,3 +60,7 @@ async function pageLoad() {
   />`
   );
 }
+
+msgModal._element.addEventListener('hidden.bs.modal', () => {
+  location.reload();
+});
