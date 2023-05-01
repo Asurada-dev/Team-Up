@@ -50,7 +50,7 @@ async function pageLoad() {
                 </div>
               </div>
               <div class="card-text fs-5 text-end">
-                <a small class="text-muted" href="activity/activity-info/${element.id}">read more...</small>
+                <a small class="text-muted" href="/activity/activity-info/${element.id}">read more...</small>
               </div>
             </div>
           </div>

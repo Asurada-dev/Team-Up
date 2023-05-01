@@ -29,7 +29,7 @@ async function pageLoad() {
       'beforeend',
       `
         <div class="chat-message-${
-          user.name === element.name ? 'right' : 'left'
+          userName === element.name ? 'right' : 'left'
         } pb-4">
             <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
                 <div class="badge bg-dark text-nowrap mb-1">${
