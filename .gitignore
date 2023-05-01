@@ -2,6 +2,7 @@
 __pycache__/
 .DS_Store
 run_crawlers.sh
+/server/public/image
 
 # Logs
 logs
