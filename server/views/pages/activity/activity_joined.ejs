@@ -14,7 +14,10 @@
           <div class="row g-0">
             <div class="col-12 col-lg-3" id="activity-img"></div>
             <div class="col-12 col-lg-8 mx-3">
-              <div class="card-body" id="activity-info"></div>
+              <div class="card-body" id="activity-info">
+                <div class="float-end" id="activity-control">
+                </div>
+              </div>
             </div>
           </div>
           <div class="card-footer">
@@ -28,29 +31,100 @@
       </div>
     </div>
 
-    <div class="modal" id="modal">
+    <div class="modal fade" id="modal-leave">
       <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark" >
+            <div class="modal-body d-flex justify-content-center fs-2">確定退出活動嗎?</div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-light btn-time-width" data-bs-dismiss="modal">Cancel</button>
+              <button id="button-leave-submit" type="submit" class="btn btn-secondary btn-time-width" data-bs-dismiss="modal">Leave</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modal-delete">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark" >
+            <div class="modal-body d-flex justify-content-center fs-2">確定刪除此活動嗎?</div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-light btn-time-width" data-bs-dismiss="modal">Cancel</button>
+              <button id="button-delete-submit" type="submit" class="btn btn-secondary btn-time-width" data-bs-dismiss="modal">Delete</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal modal-md fade" id="modal-edit" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content bg-dark" id="modal-content">
-          <div class="modal-body d-flex justify-content-center fs-2">
-            確定加入此活動嗎?
+          <div class="modal-header mx-2">
+            <h5 class="modal-title" id="modalLabel">Edit activity</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-outline-light btn-time-width"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              class="btn btn-secondary btn-time-width"
-              data-bs-dismiss="modal"
-              id="joinButton"
-            >
-              Join!
-            </button>
-          </div>
+          <form method="POST" id="activity-form" class="needs-validation">
+            <div class="modal-body mx-3" id="modal-body">
+              <div class="mb-3">
+                <label class="form-label" for="form-title">Title</label>
+                <input type="text" id="form-title" name="form-title" value="新活動" class="form-control" maxlength="20"/>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="form-members">Members</label>
+                <input type="range" id="form-maxMembers" name="form-maxMembers" value="2" min="2" max="8" oninput="this.nextElementSibling.value = this.value" />
+                <output>2</output>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col">
+                  <label class="form-label" for="form-date">Date</label>
+                  <input type="text" id="form-date" name="form-date" class="form-control" disabled readonly />
+                </div>
+                <div class="col">
+                  <label class="form-label" for="form-time">Time</label>
+                  <input type="text" id="form-time" name="form-time" class="form-control" disabled readonly />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label class="form-label" for="form-city">City</label>
+                  <input type="text" id="form-city" class="form-control" disabled readonly />
+                </div>
+                <div class="col-8">
+                  <label class="form-label" for="form-theater">Theater</label>
+                  <input type="text" id="form-theater" name="form-theater" class="form-control" disabled readonly />
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-center mb-2">
+                <img
+                  id="preview-img"
+                  src="https://movies.yahoo.com.tw/x/r/w420/i/o/production/movies/June2022/TJBbaE7dK7Phxm2p36ts-1080x1542.jpg"
+                  width="180"
+                  height="256" />
+              </div>
+              <div class="row">
+                <div class="mb-3">
+                  <input type="file" id="upload-img"class="rounded-3"
+                  targetID="preview-img" accept="image/gif, image/jpeg,
+                  image/png"/ >
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="form-description">Description</label><br />
+                <textarea
+                  id="form-description"
+                  form="activity-form"
+                  name="form-description"
+                  class="form-control"
+                  rows="5"
+                  cols="50"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+              <button type="submit" id="submit" class="btn btn-secondary">Submit</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -78,22 +152,6 @@
                         </div>
                       </div>
                     </div>
-
-
-  
-                <!-- <a href="#" class="list-group-item list-group-item-action border-0">
-                <div class="badge bg-success float-right">5</div>
-                <div class="d-flex align-items-start">
-                  <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40" />
-                  <div class="flex-grow-1 ml-3">
-                    Vanessa Tucker
-                    <div class="small"><span class=" chat-online"></span> Online</div>
-                  </div>
-                </div>
-              </a> -->
-
-  
-
               </div>
               <div class="col-12 col-lg-7 col-xl-9">
                 <div class="py-2 px-4 border-left  d-none d-lg-block">
@@ -125,7 +183,7 @@
       </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-    <script type="module" src="/js/activity/activity_info.js"></script>
+    <script type="module" src="/js/activity/activity_joined.js"></script>
     <script type="module" src="/js/activity/chatroom.js"></script>
   </body>
 </html>
