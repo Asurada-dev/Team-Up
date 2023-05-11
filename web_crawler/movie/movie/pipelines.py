@@ -133,7 +133,7 @@ class MovieSchedulePipeline:
         );
         """)
         # self.cur.execute("TRUNCATE TABLE movie_schedule;")
-        self.cur.execute("SELECT movie_id, date FROM movie_schedule;")
+        self.cur.execute("SELECT movie_id, theater_id, date, time FROM movie_schedule;")
         rows = self.cur.fetchall()
 
         self.date_in_database = rows
@@ -141,7 +141,7 @@ class MovieSchedulePipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        if(item["movie_id"],datetime.strptime(item["date"], '%Y-%m-%d').date()) not in self.date_in_database:
+        if(item["movie_id"], item["theater_id"], datetime.strptime(item["date"], '%Y-%m-%d').date(), datetime.strptime(item['time'],'%H:%M').time()) not in self.date_in_database:
             print('notIn')
             self.cur.execute("""INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s);""", (
                 item["movie_id"],
