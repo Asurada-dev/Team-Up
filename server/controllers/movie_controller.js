@@ -3,11 +3,9 @@ const pool = require('../db/connectDB');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 
-const createMovie = async (req, res) => {};
-
 const getAllMovies = async (req, res) => {
   const movieQuery = await pool.query(
-    'SELECT * FROM movie LEFT JOIN movie_info ON movie.id=movie_info.movie_id;'
+    'SELECT * FROM movie LEFT JOIN movie_info ON movie.id=movie_info.movie_id ORDER BY movie_info.release_date DESC;'
   );
 
   const allMovies = movieQuery.rows;
@@ -77,14 +75,9 @@ const getMovieSchedule = async (req, res) => {
   res.status(StatusCodes.OK).json(movieSchedule);
 };
 
-const updateMovie = async (req, res) => {};
-const deleteMovie = async (req, res) => {};
 module.exports = {
-  createMovie,
   getAllMovies,
   getSingleMovie,
   getMovieSchedule,
   getMovieReleaseDate,
-  updateMovie,
-  deleteMovie,
 };

@@ -5,7 +5,16 @@ window.onload = pageLoad;
 async function pageLoad() {
   const { data } = await axios.get('/api/v1/activity');
 
+  const today = new Date();
+  const openActivity = [];
   data.forEach((element) => {
+    const scheduleDate = new Date(`${element.date}T${element.time}`);
+    if (scheduleDate >= today) {
+      openActivity.push(element);
+    }
+  });
+
+  openActivity.forEach((element) => {
     activity.insertAdjacentHTML(
       'beforeend',
       `<div class="card col-10 bg-dark mb-2">  
@@ -50,7 +59,7 @@ async function pageLoad() {
                 </div>
               </div>
               <div class="card-text fs-5 text-end">
-                <a small class="text-muted" href="/activity/activity-info/${element.id}">read more...</small>
+                <a small class="text-muted stretched-link" href="/activity/activity-info/${element.id}">read more...</small>
               </div>
             </div>
           </div>

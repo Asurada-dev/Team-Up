@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/header')%>
+    <title>New activity</title>
+  </head>
+  <body>
+    <%- include('../partials/navbar')%>
+
+    <div class="container">
+      <div class="row">
+        <a href="/movie" class="no-underline">
+          <h2 class="mt-5">上映中</h2>
+        </a>
+        <div class="d-flex flex-row flex-nowrap overflow-auto mb-5">
+          <div class="d-flex flex-nowrap overflow" id="new-movie"></div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="/activity" class="no-underline">
+          <h2 class="mt-5">最新活動</h2>
+        </a>
+        <div>
+          <div
+            class="row justify-content-center align-items-center"
+            id="new-activity"
+          ></div>
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <a href="/activity" class="btn btn-secondary">查看更多</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1></h1>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script type="module" src="/js/home.js"></script>
+  </body>
+</html>

@@ -7,6 +7,9 @@ const createActivityModal = new bootstrap.Modal(
   document.getElementById('modal'),
   {}
 );
+
+const msgModal = new bootstrap.Modal(document.getElementById('modal-msg'), {});
+
 const activityForm = document.getElementById('activity-form');
 const formScheduleId = document.getElementById('form-scheduleId');
 const formTitle = document.getElementById('form-title');
@@ -56,11 +59,10 @@ async function pageLoad() {
   const allReleaseDate = await axios.get(
     `/api/v1/movie/movie-release-date/${id}`
   );
-  const today = new Date();
-
-  const releaseDate = allReleaseDate.data.filter(
-    (e) => new Date(e.date) > new Date()
-  );
+  const today = new Date().setHours(0, 0, 0, 0);
+  const releaseDate = allReleaseDate.data.filter((element) => {
+    return today <= new Date(element.date).setHours(0, 0, 0, 0);
+  });
   console.log(releaseDate);
 
   defaultImg = data.img;
@@ -94,10 +96,10 @@ async function pageLoad() {
 
 movieReleaseDateSelection.addEventListener('click', async function (element) {
   const id = window.location.href.split('/').reverse()[0];
+  const scheduleDate = element.target.value;
   const schedule = await axios.get(
-    `/api/v1/movie/movie-schedule/${id}?date=${element.target.value}`
+    `/api/v1/movie/movie-schedule/${id}?date=${scheduleDate}`
   );
-  console.log(schedule);
 
   const citySet = new Set();
   const theaterSet = new Set();
@@ -131,7 +133,14 @@ movieReleaseDateSelection.addEventListener('click', async function (element) {
         arrayList.forEach((element) => {
           theater.insertAdjacentHTML(
             'beforeend',
-            `<button class="btn btn-outline-light btn-time-width px-4 mx-2 mb-2" value="${element.id}">${element.time}</button>`
+            `<button class="btn btn-outline-light btn-time-width px-4 mx-2 mb-2" value="${
+              element.id
+            }"${
+              new Date(scheduleDate + ' ' + element.time).getTime() <=
+              new Date().getTime()
+                ? 'disabled'
+                : ''
+            }>${element.time}</button>`
           );
         });
       }
@@ -202,13 +211,19 @@ activityForm.addEventListener('submit', async function submit(event) {
   };
   console.log(bodyData);
 
-  const {
-    data: { msg },
-  } = await axios.post('/api/v1/activity', bodyData);
+  try {
+    const {
+      data: { msg },
+    } = await axios.post('/api/v1/activity', bodyData);
 
-  let msgModal = new bootstrap.Modal(document.getElementById('modal-msg'), {});
-  msgModal.show();
-  document.getElementById('modal-msg-body').innerHTML = msg;
+    createActivityModal.hide();
+    msgModal.show();
+    document.getElementById('modal-msg-body').innerHTML = msg;
+  } catch (error) {
+    msgModal.show();
+    document.getElementById('modal-msg-body').innerHTML =
+      error.response.data.msg;
+  }
 });
 
 formTitle.addEventListener('keyup', checkInput);

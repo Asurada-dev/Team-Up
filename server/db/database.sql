@@ -80,3 +80,5 @@ CREATE TABLE IF NOT EXISTS activity_member(
     role activity_role,
     UNIQUE (activity_id, member_id)
 );
+
+w
