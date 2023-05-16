@@ -77,5 +77,6 @@ CREATE TABLE IF NOT EXISTS activity_member(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE,
     member_id INT REFERENCES users(id),
-    role activity_role
+    role activity_role,
+    UNIQUE (activity_id, member_id)
 );
