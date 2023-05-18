@@ -13,7 +13,7 @@ loginForm.addEventListener('submit', async (event) => {
 
   try {
     const { data } = await axios.post('/api/v1/auth/login', bodyData);
-    if (data.success) window.location.href = '/movie';
+    if (data.success) window.location.href = '/';
   } catch (error) {
     const { msg } = error.response.data;
     messageBox.classList.remove('invisible');
