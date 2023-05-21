@@ -6,15 +6,15 @@ async function pageLoad() {
   const { data } = await axios.get('/api/v1/activity');
 
   const today = new Date();
-  const openActivity = [];
+  const ongoingActivity = [];
   data.forEach((element) => {
     const scheduleDate = new Date(`${element.date}T${element.time}`);
     if (scheduleDate >= today) {
-      openActivity.push(element);
+      ongoingActivity.push(element);
     }
   });
 
-  openActivity.forEach((element) => {
+  ongoingActivity.forEach((element) => {
     activity.insertAdjacentHTML(
       'beforeend',
       `<div class="card col-10 bg-dark mb-2">  

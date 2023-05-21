@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../partials/header')%>
+    <title>New activity</title>
+  </head>
+  <body>
+    <%- include('../../partials/navbar')%>
+
+    <div class="container">
+      <div class="row">
+        <h2 class="mt-5">My Activity</h2>
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button
+              class="btn btn-dark active px-5"
+              id="nav-ongoing-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-ongoing"
+              type="button"
+              role="tab"
+              aria-controls="nav-ongoing"
+              aria-selected="true"
+            >
+              On-going
+            </button>
+            <button
+              class="btn btn-dark px-5"
+              id="nav-closed-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-closed"
+              type="button"
+              role="tab"
+              aria-controls="nav-closed"
+              aria-selected="false"
+            >
+              Closed
+            </button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div
+            class="tab-pane fade show justify-content-center align-items-center m-2 active"
+            id="nav-ongoing"
+            role="tabpanel"
+            aria-labelledby="nav-ongoing-tab"
+          ></div>
+          <div
+            class="tab-pane fade m-2"
+            id="nav-closed"
+            role="tabpanel"
+            aria-labelledby="nav-closed-tab"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <%- include('../../partials/navbar_function')%>
+    <script type="module" src="/js/user/my_activity.js"></script>
+  </body>
+</html>

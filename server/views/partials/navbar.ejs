@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" href="#">Team Up</a>
+    <a class="navbar-brand" href="/">Team Up</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -16,32 +16,18 @@
     <div class="collapse navbar-collapse" id="navbar">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/movie">Movie</a>
+          <a class="nav-link" id="nav-movie" aria-current="page" href="/movie"
+            >Movie</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/activity"
+          <a
+            class="nav-link"
+            id="nav-activity"
+            aria-current="page"
+            href="/activity"
             >Activity</a
           >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <!-- <li class="nav-item">
-              <a class="nav-link disabled">Disabled</a>
-            </li> -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            >Dropdown</a
-          >
-          <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
         </li>
       </ul>
       <div class="dropdown text-end">
@@ -51,17 +37,12 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          <img
-            src="https://github.com/mdo.png"
-            alt="mdo"
-            width="40"
-            height="40"
-            class="rounded-circle"
-          />
+          <span id="user" class="badge bg-secondary px-4 py-2 fs-6">text</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark">
-          <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><a class="dropdown-item" href="#">My activity</a></li>
+          <li>
+            <a class="dropdown-item" href="/user/my-activity">My activity</a>
+          </li>
           <li><hr class="dropdown-divider" /></li>
           <li><a class="dropdown-item" id="logout">Log out</a></li>
         </ul>
