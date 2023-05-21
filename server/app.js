@@ -24,6 +24,7 @@ const activityRouter = require('./routes/activity_routes.js');
 const moviePageRouter = require('./routes/movie_page_routes.js');
 const activityPageRouter = require('./routes/activity_page_routes.js');
 const authPageRouter = require('./routes/auth_page_routes.js');
+const userPageRouter = require('./routes/user_page_routes.js');
 const homePageRouter = require('./routes/home_page_routes.js');
 
 // middleware
@@ -50,6 +51,7 @@ app.use('/api/v1/activity', activityRouter);
 
 // front-end
 app.use('/auth', authPageRouter);
+app.use('/user', userPageRouter);
 app.use('/movie', authenticateUser, moviePageRouter);
 app.use('/activity', authenticateUser, activityPageRouter);
 app.use('/', authenticateUser, homePageRouter);

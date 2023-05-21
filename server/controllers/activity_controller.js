@@ -85,6 +85,31 @@ const getSingleActivity = async (req, res) => {
   res.status(StatusCodes.OK).json(activityInfo);
 };
 
+const getUserJoinedActivity = async (req, res) => {
+  const userId = req.user.userId;
+
+  const activityQuery = await pool.query(
+    `
+  SELECT activity.id, activity.title, activity.image, activity.description, activity.create_time,
+         movie_schedule.id AS schedule_id, movie_schedule.date, movie_schedule.time, 
+         movie_info.title AS movie_title, movie_info.title_en, movie_info.runtime,
+         theater.name AS theater_name, theater.address,
+         city.name AS city
+  FROM activity
+  JOIN activity_member ON activity.id=activity_member.activity_id
+  JOIN movie_schedule ON activity.schedule_id=movie_schedule.id
+  JOIN movie_info ON movie_schedule.movie_id=movie_info.movie_id
+  JOIN theater ON movie_schedule.theater_id=theater.id
+  JOIN city ON theater.city_id=city.id
+  WHERE activity_member.member_id=$1;`,
+    [userId]
+  );
+
+  const userActivities = activityQuery.rows;
+
+  res.status(StatusCodes.OK).json(userActivities);
+};
+
 const updateActivity = async (req, res) => {
   const { id: activityId } = req.params;
   const { title, image, description, maxMembers } = req.body;
@@ -175,6 +200,7 @@ module.exports = {
   leaveActivity,
   getAllActivities,
   getSingleActivity,
+  getUserJoinedActivity,
   getActivityMembers,
   updateActivity,
   deleteActivity,

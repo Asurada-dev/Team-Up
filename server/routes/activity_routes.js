@@ -7,6 +7,7 @@ const {
   leaveActivity,
   getAllActivities,
   getSingleActivity,
+  getUserJoinedActivity,
   getActivityMembers,
   updateActivity,
   deleteActivity,
@@ -18,6 +19,7 @@ const { authenticateUser } = require('../middlewares/authentication');
 
 router.get('/', getAllActivities);
 router.get('/role/:id', authenticateUser, getCurrentMemberRole);
+router.get('/my-activity', authenticateUser, getUserJoinedActivity);
 router.get('/members/:id', authenticateUser, getActivityMembers);
 router.get('/chat-log/:id', authenticateUser, getChatLog);
 router.get('/:id', getSingleActivity);
