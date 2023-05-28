@@ -9,7 +9,7 @@ pg.types.setTypeParser(1082, function (stringValue) {
 const pool = new Pool({
   user: 'postgres',
   password: process.env.POSTGRESQL_SECRET,
-  host: 'localhost',
+  host: 'team-up-database-postgresql.cl5lnyzxynx4.ap-southeast-1.rds.amazonaws.com',
   port: 5432,
   database: 'teamup',
 });
