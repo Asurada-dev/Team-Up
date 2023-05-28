@@ -55,7 +55,7 @@ async function pageLoad() {
     'beforeend',
     ` <img
     style="max-width: 14rem"
-    src="${data.image}"
+    src="${data.img}"
     class="img-fluid rounded mx-2 my-3"
     alt="..."
   />`
@@ -109,7 +109,7 @@ async function pageLoad() {
     window.location.href = '../';
   });
 
-  previewImg.setAttribute('src', data.image);
+  previewImg.setAttribute('src', data.img);
   uploadImg.value = '';
 
   formTitle.value = data.title;

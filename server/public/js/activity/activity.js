@@ -22,7 +22,7 @@ async function pageLoad() {
           <div class="col-2">
             <img
               style="max-width: 11rem"
-              src="${element.image}"
+              src="${element.img}"
               class="img-fluid rounded mx-2 my-3"
               alt="..."
             />

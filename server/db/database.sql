@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS activity(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title TEXT,
     schedule_id INT REFERENCES movie_schedule(id),
-    image TEXT,
+    img TEXT,
     description TEXT,
     max_member INT,
     create_time TIMESTAMP
@@ -80,5 +80,3 @@ CREATE TABLE IF NOT EXISTS activity_member(
     role activity_role,
     UNIQUE (activity_id, member_id)
 );
-
-w

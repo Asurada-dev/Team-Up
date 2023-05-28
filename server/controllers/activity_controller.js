@@ -8,9 +8,10 @@ const createActivity = async (req, res) => {
   const leaderId = req.user.userId;
 
   const { title, scheduleId, image, description, maxMembers } = req.body;
+  console.log(image);
 
   const activityQuery = await pool.query(
-    'INSERT INTO activity (title, schedule_id, image, description, max_member, create_time) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id;',
+    'INSERT INTO activity (title, schedule_id, img, description, max_member, create_time) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id;',
     [title, scheduleId, image, description, maxMembers]
   );
 
@@ -41,7 +42,7 @@ const uploadActivityImage = async (req, res) => {
 
 const getAllActivities = async (req, res) => {
   const activityQuery = await pool.query(
-    `SELECT activity.id, activity.title, activity.image, activity.description, activity.max_member, activity.create_time, 
+    `SELECT activity.id, activity.title, activity.img, activity.description, activity.max_member, activity.create_time, 
             movie_schedule.id AS schedule_id, movie_schedule.date, movie_schedule.time,
             movie_info.title AS movie_title, movie_info.title_en, movie_info.runtime,
             theater.name AS theater_name, theater.address,
@@ -62,7 +63,7 @@ const getSingleActivity = async (req, res) => {
   const { id: activityId } = req.params;
 
   const activityQuery = await pool.query(
-    `SELECT activity.id, activity.title, activity.image, activity.description, activity.max_member, activity.create_time, 
+    `SELECT activity.id, activity.title, activity.img, activity.description, activity.max_member, activity.create_time, 
             movie_schedule.id AS schedule_id, movie_schedule.date, movie_schedule.time, 
             movie_info.title AS movie_title, movie_info.title_en, movie_info.runtime,
             theater.name AS theater_name, theater.address,
@@ -90,7 +91,7 @@ const getUserJoinedActivity = async (req, res) => {
 
   const activityQuery = await pool.query(
     `
-  SELECT activity.id, activity.title, activity.image, activity.description, activity.create_time,
+  SELECT activity.id, activity.title, activity.img, activity.description, activity.create_time,
          movie_schedule.id AS schedule_id, movie_schedule.date, movie_schedule.time, 
          movie_info.title AS movie_title, movie_info.title_en, movie_info.runtime,
          theater.name AS theater_name, theater.address,
@@ -115,7 +116,7 @@ const updateActivity = async (req, res) => {
   const { title, image, description, maxMembers } = req.body;
 
   await pool.query(
-    'UPDATE activity SET title=$1, image=$2, description=$3, max_member=$4 WHERE id=$5;',
+    'UPDATE activity SET title=$1, img=$2, description=$3, max_member=$4 WHERE id=$5;',
     [title, image, description, maxMembers, activityId]
   );
 
