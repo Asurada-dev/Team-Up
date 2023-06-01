@@ -12,14 +12,16 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
-db_password = os.getenv("POSTGRESQL_SECRET")
-
+db_password = os.getenv("RDS_POSTGRESQL_SECRET")
+db_host = os.getenv("RDS_POSTGRESQL_HOST")
+db_user = os.getenv("RDS_POSTGRESQL_USER")
+db_database = os.getenv("RDS_POSTGRESQL_DATABASE")
 
 class Postgres:
-    username = 'postgres'
+    username = db_user 
     password = db_password
-    hostname = 'localhost'
-    database = 'teamup'
+    hostname = db_host
+    database = db_database
     def connect(self):
         return psycopg2.connect(host=self.hostname,user=self.username,password=self.password,dbname=self.database)
 
@@ -72,7 +74,7 @@ class MovieCityPipeline:
             name TEXT
         );
         """)
-        self.cur.execute("TRUNCATE TABLE city;")
+        self.cur.execute("TRUNCATE TABLE city CASCADE;")
         self.connection.commit()
 
     def process_item(self, item, spider):
@@ -100,7 +102,6 @@ class MovieTheaterPipeline:
             city_id INT REFERENCES city(id)
         );
         """)
-        self.cur.execute("TRUNCATE TABLE theater;")
         self.connection.commit()
 
     def process_item(self, item, spider):
