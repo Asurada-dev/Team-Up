@@ -46,7 +46,7 @@ async function pageLoad() {
                   <div class="col-2">
                       <img
                       style="max-width: 11rem"
-                      src="${openActivity[i].image}"
+                      src="${openActivity[i].img}"
                       class="img-fluid rounded mx-2 my-3"
                       alt="..."
                       />

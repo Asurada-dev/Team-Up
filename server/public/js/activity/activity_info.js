@@ -54,7 +54,7 @@ async function pageLoad() {
     'beforeend',
     ` <img
     style="max-width: 14rem"
-    src="${data.image}"
+    src="${data.img}"
     class="img-fluid rounded mx-2 my-3"
     alt="..."
   />`

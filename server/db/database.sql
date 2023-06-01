@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS token(
 );
 
 CREATE TABLE IF NOT EXISTS movie (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY,
     title TEXT,
     update_time TIMESTAMP
 );
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS activity_member(
     UNIQUE (activity_id, member_id)
 );
 
-CREATE TABLE IF NOT EXISTS chat_room(
+CREATE TABLE IF NOT EXISTS chatroom_message(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE,
     member_id INT REFERENCES users(id),
