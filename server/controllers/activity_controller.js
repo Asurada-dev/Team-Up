@@ -1,8 +1,12 @@
+require('dotenv').config();
 const pool = require('../db/connectDB');
 
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const path = require('path');
+const crypto = require('crypto');
+
+const AWS = require('aws-sdk');
 
 const createActivity = async (req, res) => {
   const leaderId = req.user.userId;
@@ -26,18 +30,26 @@ const createActivity = async (req, res) => {
     .json({ msg: 'Success! Activity has been created.' });
 };
 
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
+  region: process.env.AWS_REGION,
+});
+const s3 = new AWS.S3();
+
 const uploadActivityImage = async (req, res) => {
   const activityImage = req.files.image;
-  console.log(activityImage);
-  const imagePath = path.join(
-    __dirname,
-    '../public/image/activity_image/' + `${activityImage.name}`
-  );
-  await activityImage.mv(imagePath);
 
-  return res
-    .status(StatusCodes.OK)
-    .json({ src: `/image/activity_image/${activityImage.name}` });
+  const randomImageName = crypto.randomBytes(16).toString('hex');
+  const uploadParams = {
+    Bucket: 'team-up-bucket',
+    Key: `image/activity/${randomImageName}`,
+    Body: activityImage.data,
+  };
+
+  const uploadResult = await s3.upload(uploadParams).promise();
+
+  return res.status(StatusCodes.OK).json({ src: uploadResult.Location });
 };
 
 const getAllActivities = async (req, res) => {
