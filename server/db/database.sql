@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS token(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id INT REFERENCES users(id) NOT NULL,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     refresh_token TEXT NOT NULL,
     ip TEXT NOT NULL,
     user_agent TEXT NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS movie (
 
 CREATE TABLE IF NOT EXISTS movie_info (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    movie_id INT REFERENCES movie(id),
+    movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
     title TEXT,
     title_en TEXT,
     release_date DATE,
@@ -49,12 +49,12 @@ CREATE TABLE IF NOT EXISTS theater (
     name TEXT,
     address TEXT,
     tel TEXT,
-    city_id INT REFERENCES city(id)
+    city_id INT REFERENCES city(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS movie_schedule (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    movie_id INT REFERENCES movie(id),
+    movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
     theater_id INT REFERENCES theater(id),
     date DATE,
     time TIME,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS activity(
 CREATE TABLE IF NOT EXISTS activity_member(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE,
-    member_id INT REFERENCES users(id),
+    member_id INT REFERENCES users(id) ON DELETE CASCADE,
     role activity_role,
     UNIQUE (activity_id, member_id)
 );
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS activity_member(
 CREATE TABLE IF NOT EXISTS chatroom_message(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE,
-    member_id INT REFERENCES users(id),
+    member_id INT REFERENCES users(id) ON DELETE CASCADE,
     message TEXT,
     send_time TIMESTAMP
 );
