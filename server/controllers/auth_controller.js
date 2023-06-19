@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const pool = require('../db/connectDB');
 
 const crypto = require('crypto');
@@ -6,7 +8,6 @@ const CustomError = require('../errors');
 const bcrypt = require('bcryptjs');
 const {
   attachCookiesToResponse,
-  createTokenUser,
   sendVerificationEmail,
   sendResetPasswordEmail,
   createHash,
@@ -38,11 +39,11 @@ const register = async (req, res) => {
       [name, email, hashedPassword, role, verificationToken]
     )
   ).rows[0];
-  console.log(user);
-  const origin = 'http://localhost:4000';
+
+  const origin = process.env.ORIGIN;
 
   await sendVerificationEmail({
-    to: user.name,
+    name: user.name,
     email: user.email,
     verificationToken: user.verification_token,
     origin,
@@ -171,7 +172,9 @@ const forgotPassword = async (req, res) => {
     const passwordToken = crypto.randomBytes(70).toString('hex');
     // send email
     console.log(user);
-    const origin = 'http://localhost:4000';
+
+    const origin = process.env.ORIGIN;
+
     await sendResetPasswordEmail({
       name: user.name,
       email: user.email,
