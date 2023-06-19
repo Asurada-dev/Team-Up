@@ -13,7 +13,7 @@ async function pageLoad() {
       ` <div class="d-flex align-items-start">
             <div class="flex-grow-1 mx-4 my-3">
                 ${element.name}
-                <div id="member-${element.member_id}" class="small chat-offline">'Off-line'</div>
+                <div id="member-${element.member_id}" class="small chat-offline">・Offline</div>
             </div>
         </div>`
     );

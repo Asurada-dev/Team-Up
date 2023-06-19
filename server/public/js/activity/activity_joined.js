@@ -153,7 +153,7 @@ async function pageLoad() {
       console.log(data);
       src = data.data.src;
     } else {
-      src = data.image;
+      src = data.img;
     }
 
     const jsonData = Object.fromEntries(formData.entries());
