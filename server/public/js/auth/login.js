@@ -1,5 +1,14 @@
 const loginForm = document.getElementById('login-form');
 const messageBox = document.getElementById('message');
+
+const urlParams = new URLSearchParams(window.location.search);
+const message = urlParams.get('message');
+
+if (message) {
+  messageBox.classList.remove('invisible');
+  messageBox.innerHTML = message;
+}
+
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   let formData = new FormData(loginForm);

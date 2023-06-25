@@ -54,7 +54,7 @@ app.use('/auth', authPageRouter);
 app.use('/user', userPageRouter);
 app.use('/movie', authenticateUser, moviePageRouter);
 app.use('/activity', authenticateUser, activityPageRouter);
-app.use('/', authenticateUser, homePageRouter);
+app.use('/', homePageRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

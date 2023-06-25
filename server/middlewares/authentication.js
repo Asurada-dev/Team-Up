@@ -1,3 +1,4 @@
+require('dotenv').config();
 const CustomError = require('../errors');
 const { isTokenValid } = require('../utils');
 const pool = require('../db/connectDB');
@@ -20,7 +21,9 @@ const authenticateUser = async (req, res, next) => {
     const existingToken = tokenQuery.rows[0];
 
     if (!existingToken || !existingToken?.isValid) {
-      throw new CustomError.UnauthenticatedError('Authentication Invalid');
+      const message = '?message=Please%20Login%20First';
+      const loginPage = process.env.ORIGIN + '/auth/login' + message;
+      return res.redirect(loginPage);
     }
 
     attachCookiesToResponse({
