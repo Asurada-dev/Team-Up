@@ -12,6 +12,12 @@ const authenticateUser = async (req, res, next) => {
       req.user = payload.user;
       return next();
     }
+
+    if (!refreshToken) {
+      const message = '?message=Please%20Login%20to%20Continue';
+      const loginPage = process.env.ORIGIN + '/auth/login' + message;
+      return res.redirect(loginPage);
+    }
     const payload = isTokenValid(refreshToken);
 
     const tokenQuery = await pool.query(
@@ -21,7 +27,7 @@ const authenticateUser = async (req, res, next) => {
     const existingToken = tokenQuery.rows[0];
 
     if (!existingToken || !existingToken?.isValid) {
-      const message = '?message=Please%20Login%20First';
+      const message = '?message=Authentication%20Invalid';
       const loginPage = process.env.ORIGIN + '/auth/login' + message;
       return res.redirect(loginPage);
     }
