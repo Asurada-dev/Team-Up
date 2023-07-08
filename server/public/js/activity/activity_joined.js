@@ -20,12 +20,18 @@ const uploadImg = document.getElementById('upload-img');
 
 const msgModal = new bootstrap.Modal(document.getElementById('modal-msg'), {});
 
+const chatActivityTitle = document.getElementById('chatroom-activity-title');
+const chatMovieTitle = document.getElementById('chatroom-movie-title');
+
 const activityId = window.location.href.split('/').reverse()[0];
 
 window.onload = pageLoad;
 async function pageLoad() {
   const { data } = await axios.get(`/api/v1/activity/${activityId}`);
   const members = await axios.get(`/api/v1/activity/members/${activityId}`);
+  document.title = `Activity: ${data.title} - TeamUp`;
+  chatActivityTitle.textContent = data.title;
+  chatMovieTitle.textContent = data.movie_title;
 
   activityDescription.innerHTML = data.description;
   activityInfo.insertAdjacentHTML(

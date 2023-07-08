@@ -5,9 +5,12 @@ window.onload = pageLoad;
 
 async function pageLoad() {
   const movie = await axios.get('/api/v1/movie');
-  const today = new Date().setHours(0, 0, 0, 0);
+  const today = new Date();
+
   const inTheaterMovie = movie.data.filter(
-    (element) => today === new Date(element.update_time).setHours(0, 0, 0, 0)
+    (element) =>
+      today.setHours(0, 0, 0, 0) ===
+      new Date(element.update_time).setHours(0, 0, 0, 0)
   );
 
   inTheaterMovie.forEach((element) => {
@@ -31,9 +34,10 @@ async function pageLoad() {
   const activity = await axios.get('/api/v1/activity');
 
   const openActivity = [];
+  const currentTime = new Date();
   activity.data.forEach((element) => {
     const scheduleDate = new Date(`${element.date}T${element.time}`);
-    if (scheduleDate >= today) {
+    if (scheduleDate >= currentTime) {
       openActivity.push(element);
     }
   });

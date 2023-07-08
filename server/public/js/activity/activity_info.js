@@ -25,7 +25,7 @@ async function pageLoad() {
 
   const { data } = await axios.get(`/api/v1/activity/${activityId}`);
   const members = await axios.get(`/api/v1/activity/members/${activityId}`);
-
+  document.title = `Activity: ${data.title} - TeamUp`;
   activityDescription.innerHTML = data.description;
   activityInfo.insertAdjacentHTML(
     'beforeend',

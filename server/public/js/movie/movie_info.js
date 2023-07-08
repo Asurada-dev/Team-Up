@@ -56,6 +56,7 @@ async function pageLoad() {
   const id = window.location.href.split('/').reverse()[0];
 
   const { data } = await axios.get(`/api/v1/movie/${id}`);
+  document.title = `Movie: ${data.title} - TeamUp`;
   const allReleaseDate = await axios.get(
     `/api/v1/movie/movie-release-date/${id}`
   );
