@@ -65,7 +65,24 @@ async function pageLoad() {
   });
 
   socket.on('message', (message) => {
-    outputMessage(message);
+    console.log(userName);
+    console.log(message);
+    chatRoom.insertAdjacentHTML(
+      'beforeend',
+      `<div class="chat-message-${
+        userName === message.userName ? 'right' : 'left'
+      } pb-4">
+          <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
+              <div class="badge bg-dark text-nowrap mb-1">${
+                message.userName
+              }</div>
+                  <span class="small text-end text-nowrap mt-2">${
+                    message.time
+                  }</span>
+              <div class="message">${message.text}</div>
+          </div>
+      </div>`
+    );
     chatRoom.scrollTop = chatRoom.scrollHeight;
   });
 
@@ -80,17 +97,4 @@ async function pageLoad() {
     socket.emit('chatMessage', message);
     event.target.message.value = '';
   });
-}
-
-function outputMessage(message) {
-  chatRoom.insertAdjacentHTML(
-    'beforeend',
-    `<div class="chat-message-right pb-4">
-            <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 mr-3">
-                <div class="badge bg-dark text-nowrap mb-1">${message.userName}</div>
-                    <span class="small text-end text-nowrap mt-2">${message.time}</span>
-                <div class="message">${message.text}</div>
-            </div>
-        </div>`
-  );
 }
