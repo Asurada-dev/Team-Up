@@ -5,7 +5,7 @@ const CustomError = require('../errors');
 
 const getAllMovies = async (req, res) => {
   const movieQuery = await pool.query(
-    'SELECT * FROM movie LEFT JOIN movie_info ON movie.id=movie_info.movie_id ORDER BY movie_info.release_date DESC;'
+    'SELECT * FROM movie LEFT JOIN movie_info ON movie.id=movie_info.movie_id WHERE movie_info.movie_id IS NOT NULL ORDER BY movie_info.release_date DESC;'
   );
 
   const allMovies = movieQuery.rows;
