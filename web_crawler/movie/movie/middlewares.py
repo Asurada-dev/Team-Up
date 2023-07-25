@@ -6,7 +6,7 @@
 from scrapy import signals
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+# from itemadapter import is_item, ItemAdapter
 
 
 class MovieSpiderMiddleware:
@@ -53,7 +53,7 @@ class MovieSpiderMiddleware:
             yield r
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)
 
 
 class MovieDownloaderMiddleware:
@@ -100,4 +100,4 @@ class MovieDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)

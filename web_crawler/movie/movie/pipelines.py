@@ -1,48 +1,48 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
-# useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
 import psycopg2
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-load_dotenv()
 
+
+load_dotenv()
 db_password = os.getenv("RDS_POSTGRESQL_SECRET")
 db_host = os.getenv("RDS_POSTGRESQL_HOST")
 db_user = os.getenv("RDS_POSTGRESQL_USER")
 db_database = os.getenv("RDS_POSTGRESQL_DATABASE")
 
+
 class Postgres:
-    username = db_user 
+    username = db_user
     password = db_password
     hostname = db_host
     database = db_database
+
     def connect(self):
-        return psycopg2.connect(host=self.hostname,user=self.username,password=self.password,dbname=self.database)
+        return psycopg2.connect(
+            host=self.hostname,
+            user=self.username,
+            password=self.password,
+            dbname=self.database,
+        )
 
 
 class MovieIdPipeline:
-
     def __init__(self):
         self.connection = Postgres.connect(Postgres)
-        # se1lf.connection = psycopg2.connect(host=Postgres.hostname, user=Postgres.username, password=Postgres.password, dbname=Postgres.database)
-        
-        ## Create cursor, used to execute commands
+
         self.cur = self.connection.cursor()
-    
-        self.cur.execute("""
+
+        self.cur.execute(
+            """
         CREATE TABLE IF NOT EXISTS movie(
-          id INT PRIMARY KEY ,
-          title TEXT
+          id INT PRIMARY KEY,
+          title TEXT,
+          update_time TIMESTAMP
         );
-        """)
-        # self.cur.execute("TRUNCATE TABLE movie CASCADE;")
-        self.cur.execute("SELECT id FROM movie")
+        """
+        )
+
+        self.cur.execute("SELECT id FROM movie;")
         rows = self.cur.fetchall()
 
         self.ids_in_database = list(row[0] for row in rows)
@@ -50,50 +50,61 @@ class MovieIdPipeline:
 
     def process_item(self, item, spider):
         if int(item["id"]) in self.ids_in_database:
-            self.cur.execute("""UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);""",(item["id"],))
+            self.cur.execute(
+                "UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);",
+                (item["id"],),
+            )
         else:
-            self.cur.execute("""INSERT INTO movie (id, title, update_time) values (%s, %s, CURRENT_TIMESTAMP);""", (
-                item["id"],
-                item["title"]
-            ))
+            self.cur.execute(
+                "INSERT INTO movie (id, title, update_time) values (%s, %s, CURRENT_TIMESTAMP);",
+                (
+                    item["id"],
+                    item["title"],
+                ),
+            )
         self.connection.commit()
 
         return item
 
-class MovieCityPipeline:
 
+class MovieCityPipeline:
     def __init__(self):
         self.connection = Postgres.connect(Postgres)
-        
-        ## Create cursor, used to execute commands
+
         self.cur = self.connection.cursor()
-    
-        self.cur.execute("""
+
+        self.cur.execute(
+            """
         CREATE TABLE IF NOT EXISTS city (
             id INT PRIMARY KEY,
             name TEXT
         );
-        """)
+        """
+        )
+
         self.cur.execute("TRUNCATE TABLE city CASCADE;")
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute("""INSERT INTO city (id, name) values (%s, %s);""", (
-            item["id"],
-            item["name"]
-        ))
+        self.cur.execute(
+            "INSERT INTO city (id, name) values (%s, %s);",
+            (
+                item["id"],
+                item["name"],
+            ),
+        )
         self.connection.commit()
         return item
 
-class MovieTheaterPipeline:
 
+class MovieTheaterPipeline:
     def __init__(self):
         self.connection = Postgres.connect(Postgres)
-        
-        ## Create cursor, used to execute commands
+
         self.cur = self.connection.cursor()
-    
-        self.cur.execute("""
+
+        self.cur.execute(
+            """
         CREATE TABLE IF NOT EXISTS theater (
             id INT PRIMARY KEY,
             name TEXT,
@@ -101,39 +112,44 @@ class MovieTheaterPipeline:
             tel TEXT,
             city_id INT REFERENCES city(id)
         );
-        """)
+        """
+        )
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute("""INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);""", (
-            item["id"],
-            item["name"],
-            item["address"],
-            item["tel"],
-            item["city_id"],
-        ))
+        self.cur.execute(
+            "INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);",
+            (
+                item["id"],
+                item["name"],
+                item["address"],
+                item["tel"],
+                item["city_id"],
+            ),
+        )
         self.connection.commit()
         return item
 
-class MovieSchedulePipeline:
 
+class MovieSchedulePipeline:
     def __init__(self):
-        self.connection=Postgres.connect(Postgres)
-        
-        ## Create cursor, used to execute commands
+        self.connection = Postgres.connect(Postgres)
+
         self.cur = self.connection.cursor()
-    
-        self.cur.execute("""
+
+        self.cur.execute(
+            """
         CREATE TABLE IF NOT EXISTS movie_schedule (
             id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            movie_id INT REFERENCES movie(id),
+            movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
             theater_id INT REFERENCES theater(id),
             date DATE,
             time TIME,
             kind TEXT
         );
-        """)
-        # self.cur.execute("TRUNCATE TABLE movie_schedule;")
+        """
+        )
+
         self.cur.execute("SELECT movie_id, theater_id, date, time FROM movie_schedule;")
         rows = self.cur.fetchall()
 
@@ -142,30 +158,38 @@ class MovieSchedulePipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        if(item["movie_id"], item["theater_id"], datetime.strptime(item["date"], '%Y-%m-%d').date(), datetime.strptime(item['time'],'%H:%M').time()) not in self.date_in_database:
-            print('notIn')
-            self.cur.execute("""INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind) values (%s, %s, %s, %s, %s);""", (
-                item["movie_id"],
-                item["theater_id"],
-                str(item["date"]),
-                str(item["time"]), 
-                str(item["kind"])
-            ))
+        if (
+            item["movie_id"],
+            item["theater_id"],
+            datetime.strptime(item["date"], "%Y-%m-%d").date(),
+            datetime.strptime(item["time"], "%H:%M").time(),
+        ) not in self.date_in_database:
+            self.cur.execute(
+                """INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind)
+                values (%s, %s, %s, %s, %s);""",
+                (
+                    item["movie_id"],
+                    item["theater_id"],
+                    str(item["date"]),
+                    str(item["time"]),
+                    str(item["kind"]),
+                ),
+            )
             self.connection.commit()
         return item
 
-class MovieInfoPipeline:
 
+class MovieInfoPipeline:
     def __init__(self):
-        self.connection=Postgres.connect(Postgres)
-        
-        ## Create cursor, used to execute commands
+        self.connection = Postgres.connect(Postgres)
+
         self.cur = self.connection.cursor()
-    
-        self.cur.execute("""
+
+        self.cur.execute(
+            """
         CREATE TABLE IF NOT EXISTS movie_info (
             id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            movie_id INT REFERENCES movie(id),
+            movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
             title TEXT,
             title_en TEXT,
             release_date DATE,
@@ -174,9 +198,10 @@ class MovieInfoPipeline:
             imdb REAL,
             img TEXT
         );
-        """)
-        # self.cur.execute("TRUNCATE TABLE movie_info;")
-        self.cur.execute("SELECT movie_id FROM movie_info")
+        """
+        )
+
+        self.cur.execute("SELECT movie_id FROM movie_info;")
         rows = self.cur.fetchall()
 
         self.ids_in_database = list(row[0] for row in rows)
@@ -185,19 +210,19 @@ class MovieInfoPipeline:
 
     def process_item(self, item, spider):
         if int(item["movie_id"]) not in self.ids_in_database:
-            self.cur.execute("""INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime, distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""", (
-            item["movie_id"],
-            item["title"],
-            item["title_en"],
-            item["release_date"],
-            item["runtime"],
-            item["distributor"],
-            item["imdb_score"],
-            item["img"],
-            ))
+            self.cur.execute(
+                """INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime,
+                distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""",
+                (
+                    item["movie_id"],
+                    item["title"],
+                    item["title_en"],
+                    item["release_date"],
+                    item["runtime"],
+                    item["distributor"],
+                    item["imdb_score"],
+                    item["img"],
+                ),
+            )
             self.connection.commit()
         return item
-
-
-
-
