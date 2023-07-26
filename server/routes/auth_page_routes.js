@@ -21,7 +21,4 @@ router.get('/reset-password', (req, res) => {
   res.render('pages/auth/reset_password');
 });
 
-// router.get('/auth/check-email', (req, res) => {
-//   res.render('pages/auth/check_email');
-// });
 module.exports = router;

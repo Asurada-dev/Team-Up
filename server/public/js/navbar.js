@@ -1,6 +1,5 @@
 const user = document.getElementById('user');
 const userDropdown = document.getElementById('user-dropdown');
-// const links = document.querySelectorAll('.nav-link');
 
 window.addEventListener('load', async function () {
   const currentUrl = window.location.pathname;

@@ -10,7 +10,6 @@ const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
 const attachCookiesToResponse = (res, user, refreshToken) => {
   const accessTokenJWT = createJWT({ user });
   const refreshTokenJWT = createJWT({ user, refreshToken });
-  // (payload = { name: user.name, id: user.id, role: user.role })
 
   const oneDay = 1000 * 60 * 60 * 24;
   const expiration = 1000 * 60 * 60 * 24 * 30;

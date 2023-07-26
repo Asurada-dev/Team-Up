@@ -17,14 +17,14 @@ const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   const emailAlreadyExists = await pool.query(
-    'SELECT 1 FROM users WHERE email=$1 ;',
+    'SELECT 1 FROM users WHERE email=$1;',
     [email]
   );
   if (emailAlreadyExists.rows.length) {
     throw new CustomError.BadRequestError('Email already exists');
   }
 
-  const isFirstAccount = await pool.query('SELECT 1 FROM users');
+  const isFirstAccount = await pool.query('SELECT 1 FROM users;');
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -35,7 +35,7 @@ const register = async (req, res) => {
 
   const user = (
     await pool.query(
-      'INSERT INTO users (name, email, password, role, verification_token) VALUES ($1,$2,$3,$4,$5) RETURNING id, name, email, verification_token;',
+      'INSERT INTO users (name, email, password, role, verification_token) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, verification_token;',
       [name, email, hashedPassword, role, verificationToken]
     )
   ).rows[0];
@@ -52,17 +52,14 @@ const register = async (req, res) => {
   res
     .status(StatusCodes.CREATED)
     .json({ msg: 'Please check your email to verify account.' });
-
-  // .json({ msg: 'Success! Please check your email to verify account.' });
 };
 
 const verifyEmail = async (req, res) => {
   const { token: verificationToken, email } = req.body;
 
-  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1 ;', [
+  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1;', [
     email,
   ]);
-  // console.log(userQuery);
 
   if (!userQuery.rows.length) {
     throw new CustomError.UnauthenticatedError('Verification Failed');
@@ -73,7 +70,7 @@ const verifyEmail = async (req, res) => {
   if (user.verification_token !== verificationToken) {
     throw new CustomError.UnauthenticatedError('Verification Failed');
   }
-  // now = new Date();
+
   await pool.query(
     'UPDATE users SET verification_token=$1, is_verified=$2, verified_date=$3  WHERE email=$4;',
     ['', true, new Date(), email]
@@ -89,7 +86,7 @@ const login = async (req, res) => {
     throw new CustomError.BadRequestError('Please provide email and password');
   }
 
-  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1 ;', [
+  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1;', [
     email,
   ]);
 
@@ -106,11 +103,10 @@ const login = async (req, res) => {
     throw new CustomError.UnauthenticatedError('Please verify your email');
   }
 
-  // create refresh token
   let refreshToken = '';
 
-  //check for existing token
-  const tokenQuery = await pool.query('SELECT * FROM token WHERE user_id=$1', [
+  // check for existing token
+  const tokenQuery = await pool.query('SELECT * FROM token WHERE user_id=$1;', [
     user.id,
   ]);
   const token = tokenQuery.rows[0];
@@ -124,24 +120,23 @@ const login = async (req, res) => {
     attachCookiesToResponse(res, tokenUser, refreshToken);
 
     res.status(StatusCodes.OK).json({ success: true });
-    return;
   }
 
   refreshToken = crypto.randomBytes(40).toString('hex');
   const userAgent = req.headers['user-agent'];
   const ip = req.ip;
 
-  console.log(refreshToken, userAgent, ip);
   await pool.query(
-    'INSERT INTO token (user_id, refresh_token, ip, user_agent) VALUES ($1,$2,$3,$4);',
+    'INSERT INTO token (user_id, refresh_token, ip, user_agent) VALUES ($1, $2, $3, $4);',
     [user.id, refreshToken, ip, userAgent]
   );
   attachCookiesToResponse(res, tokenUser, refreshToken);
+
   res.status(StatusCodes.OK).json({ success: true });
 };
 
 const logout = async (req, res) => {
-  await pool.query('DELETE FROM token WHERE user_id=$1', [req.user.userId]);
+  await pool.query('DELETE FROM token WHERE user_id=$1;', [req.user.userId]);
 
   res.cookie('accessToken', 'logout', {
     httpOnly: true,
@@ -151,6 +146,7 @@ const logout = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now()),
   });
+
   res.status(StatusCodes.OK).json({ success: true });
 };
 
@@ -159,7 +155,7 @@ const forgotPassword = async (req, res) => {
   if (!email) {
     throw new CustomError.BadRequestError('Please provide valid email');
   }
-  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1 ;', [
+  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1;', [
     email,
   ]);
 
@@ -170,8 +166,6 @@ const forgotPassword = async (req, res) => {
 
   if (user) {
     const passwordToken = crypto.randomBytes(70).toString('hex');
-    // send email
-    console.log(user);
 
     const origin = process.env.ORIGIN;
 
@@ -190,10 +184,12 @@ const forgotPassword = async (req, res) => {
       [passwordTokenHashed, passwordTokenExpirationDate, user.email]
     );
   }
+
   res
     .status(StatusCodes.OK)
     .json({ msg: 'Please check your email for reset password link' });
 };
+
 const resetPassword = async (req, res) => {
   const { token, email, newPassword } = req.body;
 
@@ -201,7 +197,7 @@ const resetPassword = async (req, res) => {
     throw new CustomError.BadRequestError('Please provide all values');
   }
 
-  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1 ;', [
+  const userQuery = await pool.query('SELECT * FROM users WHERE email=$1;', [
     email,
   ]);
   if (!userQuery.rows.length) {
@@ -230,6 +226,7 @@ const resetPassword = async (req, res) => {
         .status(StatusCodes.OK)
         .json({ msg: 'Success! Please use new password to login' });
     }
+
     throw new CustomError.UnauthenticatedError('Token invalid');
   }
 };

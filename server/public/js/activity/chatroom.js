@@ -48,7 +48,6 @@ async function pageLoad() {
   socket.emit('joinRoom', { userId, userName, activityId });
 
   socket.on('online', (userList) => {
-    console.log(userList);
     userList.forEach((userId) => {
       const member = document.getElementById(`member-${userId}`);
       member.innerHTML = '・Online';
@@ -65,8 +64,6 @@ async function pageLoad() {
   });
 
   socket.on('message', (message) => {
-    console.log(userName);
-    console.log(message);
     chatRoom.insertAdjacentHTML(
       'beforeend',
       `<div class="chat-message-${

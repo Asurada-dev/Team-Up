@@ -1,34 +1,12 @@
 require('dotenv').config();
+
 const pool = require('../db/connectDB');
 
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
-const path = require('path');
 const crypto = require('crypto');
 
 const AWS = require('aws-sdk');
-
-const createActivity = async (req, res) => {
-  const leaderId = req.user.userId;
-
-  const { title, scheduleId, image, description, maxMembers } = req.body;
-  console.log(image);
-
-  const activityQuery = await pool.query(
-    'INSERT INTO activity (title, schedule_id, img, description, max_member, create_time) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id;',
-    [title, scheduleId, image, description, maxMembers]
-  );
-
-  const { id: activityId } = activityQuery.rows[0];
-  await pool.query(
-    "INSERT INTO activity_member(activity_id, member_id, role) VALUES ($1, $2, 'leader')",
-    [activityId, leaderId]
-  );
-
-  res
-    .status(StatusCodes.CREATED)
-    .json({ msg: 'Success! Activity has been created.' });
-};
 
 AWS.config.update({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
@@ -36,6 +14,27 @@ AWS.config.update({
   region: process.env.AWS_REGION,
 });
 const s3 = new AWS.S3();
+
+const createActivity = async (req, res) => {
+  const leaderId = req.user.userId;
+
+  const { title, scheduleId, image, description, maxMembers } = req.body;
+
+  const activityQuery = await pool.query(
+    'INSERT INTO activity (title, schedule_id, img, description, max_member, create_time) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id;',
+    [title, scheduleId, image, description, maxMembers]
+  );
+  const { id: activityId } = activityQuery.rows[0];
+
+  await pool.query(
+    "INSERT INTO activity_member(activity_id, member_id, role) VALUES ($1, $2, 'leader');",
+    [activityId, leaderId]
+  );
+
+  res
+    .status(StatusCodes.CREATED)
+    .json({ msg: 'Success! Activity has been created.' });
+};
 
 const uploadActivityImage = async (req, res) => {
   const activityImage = req.files.image;
@@ -89,7 +88,6 @@ const getSingleActivity = async (req, res) => {
     [activityId]
   );
   const activityInfo = activityQuery.rows[0];
-  // console.log(activityQuery);
 
   if (!activityInfo) {
     throw new CustomError.NotFoundError(`No activity with ID: ${activityId}`);
@@ -117,7 +115,6 @@ const getUserJoinedActivity = async (req, res) => {
   WHERE activity_member.member_id=$1;`,
     [userId]
   );
-
   const userActivities = activityQuery.rows;
 
   res.status(StatusCodes.OK).json(userActivities);
@@ -132,7 +129,6 @@ const updateActivity = async (req, res) => {
     [title, image, description, maxMembers, activityId]
   );
 
-  // const activityInfo = activityQuery.rows[0];
   res
     .status(StatusCodes.OK)
     .json({ msg: 'Success! Activity has been updated.' });
@@ -141,7 +137,8 @@ const updateActivity = async (req, res) => {
 const deleteActivity = async (req, res) => {
   const { id: activityId } = req.params;
 
-  await pool.query('DELETE FROM activity WHERE id=$1', [activityId]);
+  await pool.query('DELETE FROM activity WHERE id=$1;', [activityId]);
+
   res
     .status(StatusCodes.OK)
     .json({ msg: 'Success! Activity has been deleted.' });
@@ -166,7 +163,7 @@ const leaveActivity = async (req, res) => {
   const userId = req.user.userId;
 
   await pool.query(
-    'DELETE FROM activity_member WHERE activity_id=$1 AND member_id=$2',
+    'DELETE FROM activity_member WHERE activity_id=$1 AND member_id=$2;',
     [activityId, userId]
   );
 
@@ -177,32 +174,38 @@ const leaveActivity = async (req, res) => {
 
 const getActivityMembers = async (req, res) => {
   const { id: activityId } = req.params;
+
   const activityQuery = await pool.query(
-    'SELECT activity_member.activity_id, activity_member.member_id, users.name, activity_member.role  FROM activity_member JOIN users ON activity_member.member_id=users.id WHERE activity_member.activity_id=$1',
+    'SELECT activity_member.activity_id, activity_member.member_id, users.name, activity_member.role  FROM activity_member JOIN users ON activity_member.member_id=users.id WHERE activity_member.activity_id=$1;',
     [activityId]
   );
   const activityMembers = activityQuery.rows;
+
   res.status(StatusCodes.OK).json(activityMembers);
 };
 
 const getChatLog = async (req, res) => {
   const { id: activityId } = req.params;
+
   const activityQuery = await pool.query(
-    "SELECT users.name, cm.message, to_char(cm.send_time, 'YYYY-MM-DD HH24:MI') AS send_time FROM chatroom_message AS cm JOIN users ON cm.member_id=users.id WHERE cm.activity_id=$1 ORDER BY cm.send_time",
+    "SELECT users.name, cm.message, to_char(cm.send_time, 'YYYY-MM-DD HH24:MI') AS send_time FROM chatroom_message AS cm JOIN users ON cm.member_id=users.id WHERE cm.activity_id=$1 ORDER BY cm.send_time;",
     [activityId]
   );
   const chatLogs = activityQuery.rows;
+
   res.status(StatusCodes.OK).json(chatLogs);
 };
 
 const getCurrentMemberRole = async (req, res) => {
   const { id: activityId } = req.params;
   const userId = req.user.userId;
+
   const activtyQuery = await pool.query(
-    'SELECT role FROM activity_member WHERE activity_id=$1 AND member_id=$2',
+    'SELECT role FROM activity_member WHERE activity_id=$1 AND member_id=$2;',
     [activityId, userId]
   );
   const role = activtyQuery.rows[0];
+
   res.status(StatusCodes.OK).json(role);
 };
 

@@ -24,13 +24,13 @@ resetForm.addEventListener('submit', async (event) => {
   const jsonData = Object.fromEntries(resetInput.entries());
   const token = urlParams.get('token');
   const email = urlParams.get('email');
-  console.log(jsonData);
+
   let bodyData = {
     token: token,
     email: email,
     newPassword: jsonData['new-password'],
   };
-  console.log(bodyData);
+
   try {
     const { data } = await axios.post('/api/v1/auth/reset-password', bodyData);
     if (messageBox.classList.contains('alert-danger')) {

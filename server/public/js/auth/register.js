@@ -1,7 +1,6 @@
 const registerForm = document.getElementById('register-form');
 const messageBox = document.getElementById('message');
 registerForm.addEventListener('submit', async (event) => {
-  console.log('pass');
   event.preventDefault();
   let formData = new FormData(registerForm);
   const registerInput = new URLSearchParams(formData);
@@ -16,7 +15,7 @@ registerForm.addEventListener('submit', async (event) => {
 
   try {
     const { data } = await axios.post('/api/v1/auth/register', bodyData);
-    // if (data.success) window.location.href = '/check-email';
+
     if (messageBox.classList.contains('alert-danger')) {
       messageContent(data.msg);
     }

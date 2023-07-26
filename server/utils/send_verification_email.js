@@ -12,7 +12,6 @@ const sendVerificationEmail = async ({
   Let's confirm your email address.</h3>
   <p>By clicking on the following link, you are confirming your email address.</p>
   <p><a href="${verifyEmail}">Verify Email</a> </p>`;
-  console.log(message);
 
   return sendEmail({
     to: email,

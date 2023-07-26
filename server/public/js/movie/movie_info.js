@@ -64,7 +64,6 @@ async function pageLoad() {
   const releaseDate = allReleaseDate.data.filter((element) => {
     return today <= new Date(element.date).setHours(0, 0, 0, 0);
   });
-  console.log(releaseDate);
 
   defaultImg = data.img;
 
@@ -110,6 +109,7 @@ movieReleaseDateSelection.addEventListener('click', async function (element) {
   });
 
   movieSchedule.innerHTML = '';
+
   citySet.forEach((city) => {
     movieSchedule.insertAdjacentHTML(
       'beforeend',
@@ -147,6 +147,7 @@ movieReleaseDateSelection.addEventListener('click', async function (element) {
       }
     });
   });
+
   const theater = document.getElementsByClassName('theater');
 
   Array.from(theater).forEach((button) => {
@@ -158,7 +159,6 @@ movieReleaseDateSelection.addEventListener('click', async function (element) {
         previewImg.setAttribute('src', data.img);
         formScheduleId.setAttribute('value', event.target.value);
         uploadImg.value = '';
-
         formTitle.value = '';
         formTitle.classList.remove('is-valid', 'is-invalid');
         formDescription.value = '';
@@ -188,7 +188,6 @@ activityForm.addEventListener('submit', async function submit(event) {
     const data = await axios.post('/api/v1/activity/upload-image', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log(data);
     src = data.data.src;
   } else {
     src = defaultImg;
@@ -197,10 +196,7 @@ activityForm.addEventListener('submit', async function submit(event) {
   const jsonData = Object.fromEntries(formData.entries());
 
   for (const [key, value] of Object.entries(jsonData)) {
-    console.log(key, value);
-    if (!value) {
-      return;
-    }
+    if (!value) return;
   }
 
   let bodyData = {
@@ -210,7 +206,6 @@ activityForm.addEventListener('submit', async function submit(event) {
     maxMembers: jsonData['form-maxMembers'],
     description: jsonData['form-description'],
   };
-  console.log(bodyData);
 
   try {
     const {
@@ -236,10 +231,12 @@ function checkInput() {
     ? inValid(formDescription)
     : valid(formDescription);
 }
+
 function inValid(node) {
   node.classList.remove('is-valid');
   node.classList.add('is-invalid');
 }
+
 function valid(node) {
   node.classList.remove('is-invalid');
   node.classList.add('is-valid');

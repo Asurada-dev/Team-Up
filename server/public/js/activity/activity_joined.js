@@ -156,7 +156,6 @@ async function pageLoad() {
       const data = await axios.post('/api/v1/activity/upload-image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log(data);
       src = data.data.src;
     } else {
       src = data.img;
@@ -165,10 +164,7 @@ async function pageLoad() {
     const jsonData = Object.fromEntries(formData.entries());
 
     for (const [key, value] of Object.entries(jsonData)) {
-      console.log(key, value);
-      if (!value) {
-        return;
-      }
+      if (!value) return;
     }
 
     let bodyData = {
@@ -177,7 +173,6 @@ async function pageLoad() {
       maxMembers: jsonData['form-maxMembers'],
       description: jsonData['form-description'],
     };
-    console.log(bodyData);
 
     const {
       data: { msg },
@@ -197,10 +192,12 @@ function checkInput() {
     ? inValid(formDescription)
     : valid(formDescription);
 }
+
 function inValid(node) {
   node.classList.remove('is-valid');
   node.classList.add('is-invalid');
 }
+
 function valid(node) {
   node.classList.remove('is-invalid');
   node.classList.add('is-valid');

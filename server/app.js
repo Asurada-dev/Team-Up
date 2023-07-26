@@ -2,6 +2,7 @@ require('dotenv').config();
 require('express-async-errors');
 
 const http = require('http');
+
 // express framework
 const express = require('express');
 const app = express();
@@ -15,8 +16,8 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
+
 // routers
-// const userRouter = require('./routes/userRoutes.js');
 const authRouter = require('./routes/auth_routes.js');
 const userRouter = require('./routes/user_routes.js');
 const movieRouter = require('./routes/movie_routes.js');

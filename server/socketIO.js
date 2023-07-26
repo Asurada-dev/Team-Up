@@ -22,7 +22,7 @@ module.exports = (server) => {
 
     socket.on('chatMessage', async (message) => {
       await pool.query(
-        'INSERT INTO chatroom_message(activity_id, member_id, message, send_time) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
+        'INSERT INTO chatroom_message(activity_id, member_id, message, send_time) VALUES ($1, $2, $3, CURRENT_TIMESTAMP);',
         [socket.room, socket.userId, message]
       );
       io.to(socket.room).emit(
