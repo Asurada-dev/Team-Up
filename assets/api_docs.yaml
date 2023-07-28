@@ -1,0 +1,693 @@
+openapi: 3.0.0
+info:
+  title: Team-Up
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://teamup-demo.site/api/v1
+    variables: {}
+paths:
+  /movie:
+    get:
+      tags:
+        - Movie
+      summary: Get All Movies
+      operationId: GetAllMovies
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /movie/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The movie ID
+    get:
+      tags:
+        - Movie
+      summary: Get Single Movie
+      operationId: GetSingleMovie
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /movie/movie-release-date/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The movie ID
+    get:
+      tags:
+        - Movie
+      summary: Get Movie Release Date
+      operationId: GetMovieReleaseDate
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /movie/movie-schedule/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The movie ID
+    get:
+      tags:
+        - Movie
+      summary: Get Movie Schedule
+      operationId: GetMovieSchedule
+      parameters:
+        - name: date
+          in: query
+          description: ''
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: '"2023-07-27"'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /activity:
+    post:
+      tags:
+        - Activity
+      summary: Create Activity
+      operationId: CreateActivity
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CreateActivityRequest'
+                - example:
+                    title: Test From Postman
+                    scheduleId: 117
+                    image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+                    description: Have Fun - Postman
+                    maxMembers: 4
+            example:
+              title: Test From Postman
+              scheduleId: 117
+              image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+              description: Have Fun - Postman
+              maxMembers: 4
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    get:
+      tags:
+        - Activity
+      summary: Get All Activities
+      operationId: GetAllActivities
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /activity/upload-image:
+    post:
+      tags:
+        - Activity
+      summary: Upload Activity Image
+      operationId: UploadActivityImage
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              required:
+                - image
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+        required: false
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /activity/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The activity ID
+    get:
+      tags:
+        - Activity
+      summary: Get Single Activity
+      operationId: GetSingleActivity
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    post:
+      tags:
+        - Activity
+      summary: Join Activity
+      operationId: JoinActivity
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    patch:
+      tags:
+        - Activity
+      summary: Update Activity
+      operationId: UpdateActivity
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/UpdateActivityRequest'
+                - example:
+                    title: Update Test - Postman
+                    image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+                    description: Update Test - Postman
+                    maxMembers: 8
+            example:
+              title: Update Test - Postman
+              image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+              description: Update Test - Postman
+              maxMembers: 8
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    delete:
+      tags:
+        - Activity
+      summary: Delete Activity
+      operationId: DeleteActivity
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /activity/my-activity:
+    get:
+      tags:
+        - Activity
+      summary: Get User Joined Activities
+      operationId: GetUserJoinedActivities
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /activity/leave/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The activity ID
+    delete:
+      tags:
+        - Activity
+      summary: Leave Activity
+      operationId: LeaveActivity
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  # /activity/members/4:
+  /activity/members/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The activity ID
+    get:
+      tags:
+        - Activity
+      summary: Get Activity Members
+      operationId: GetActivityMembers
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  # /activity/chat-log/4:
+  /activity/chat-log/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The activity ID
+    get:
+      tags:
+        - Activity
+      summary: Get Activity Chat Log
+      operationId: GetActivityChatLog
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /activity/role/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The activity ID
+    get:
+      tags:
+        - Activity
+      summary: Get Current Member Role
+      operationId: GetCurrentMemberRole
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register User
+      operationId: RegisterUser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/RegisterUserRequest'
+                - example:
+                    name: Johnson
+                    email: teamupdemoac@gmail.com
+                    password: '123'
+            example:
+              name: Johnson
+              email: teamupdemoac@gmail.com
+              password: '123'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login User
+      operationId: LoginUser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LoginUserRequest'
+                - example:
+                    email: teamupdemoac@gmail.com
+                    password: teamup456
+            example:
+              email: teamupdemoac@gmail.com
+              password: teamup456
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/logout:
+    delete:
+      tags:
+        - Auth
+      summary: Logout User
+      operationId: LogoutUser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: Forgot Password
+      operationId: ForgotPassword
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ForgotPasswordRequest'
+                - example:
+                    email: teamupdemoac@gmail.com
+            example:
+              email: teamupdemoac@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset Password
+      operationId: ResetPassword
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ResetPasswordRequest'
+                - example:
+                    token: 15f1177d7f9558078d1b85303e41fbc9c9824a1725f5441dd35b506cf7cab9575e315d892040a11c787ad4240d4353c4cb78f4505dc4a92b20935d2f55b6b6ca69e44a1084bd
+                    email: teamupdemoac@gmail.com
+                    newPassword: '456'
+            example:
+              token: 15f1177d7f9558078d1b85303e41fbc9c9824a1725f5441dd35b506cf7cab9575e315d892040a11c787ad4240d4353c4cb78f4505dc4a92b20935d2f55b6b6ca69e44a1084bd
+              email: teamupdemoac@gmail.com
+              newPassword: '456'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/verify-email:
+    post:
+      tags:
+        - Auth
+      summary: Verify Email
+      operationId: VerifyEmail
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/VerifyEmailRequest'
+                - example:
+                    token: f5627b14925ef63b0bfd11361e349f656efc54aafec5d207da484441a86e31208d90acabaf2ea570
+                    email: teamupdemoac@gmail.com
+            example:
+              token: f5627b14925ef63b0bfd11361e349f656efc54aafec5d207da484441a86e31208d90acabaf2ea570
+              email: teamupdemoac@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /user/current-user:
+    get:
+      tags:
+        - User
+      summary: Get Current User
+      operationId: GetCurrentUser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /user:
+    get:
+      tags:
+        - User
+      summary: Get All Users
+      operationId: GetAllUsers
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /user/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The user ID
+    get:
+      tags:
+        - User
+      summary: Get Single user
+      operationId: GetSingleuser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /user/update:
+    patch:
+      tags:
+        - User
+      summary: Update User
+      operationId: UpdateUser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/UpdateUserRequest'
+                - example:
+                    name: Chiara
+            example:
+              name: Chiara
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+components:
+  schemas:
+    CreateActivityRequest:
+      title: CreateActivityRequest
+      required:
+        - title
+        - scheduleId
+        - image
+        - description
+        - maxMembers
+      type: object
+      properties:
+        title:
+          type: string
+        scheduleId:
+          type: integer
+          format: int32
+        image:
+          type: string
+        description:
+          type: string
+        maxMembers:
+          type: integer
+          format: int32
+      example:
+        title: Test From Postman
+        scheduleId: 117
+        image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+        description: Have Fun - Postman
+        maxMembers: 4
+    UpdateActivityRequest:
+      title: UpdateActivityRequest
+      required:
+        - title
+        - image
+        - description
+        - maxMembers
+      type: object
+      properties:
+        title:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        maxMembers:
+          type: integer
+          format: int32
+      example:
+        title: Update Test - Postman
+        image: https://team-up-bucket.s3.ap-southeast-1.amazonaws.com/image/activity/822a28a34470c14977281bf80df85509
+        description: Update Test - Postman
+        maxMembers: 8
+    RegisterUserRequest:
+      title: RegisterUserRequest
+      required:
+        - name
+        - email
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        name: Johnson
+        email: teamupdemoac@gmail.com
+        password: '123'
+    LoginUserRequest:
+      title: LoginUserRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: teamupdemoac@gmail.com
+        password: teamup456
+    LoginAdminRequest:
+      title: LoginAdminRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: asurada.dev@gmail.com
+        password: '123'
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+      example:
+        email: teamupdemoac@gmail.com
+    ResetPasswordRequest:
+      title: ResetPasswordRequest
+      required:
+        - token
+        - email
+        - newPassword
+      type: object
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+        newPassword:
+          type: string
+      example:
+        token: 15f1177d7f9558078d1b85303e41fbc9c9824a1725f5441dd35b506cf7cab9575e315d892040a11c787ad4240d4353c4cb78f4505dc4a92b20935d2f55b6b6ca69e44a1084bd
+        email: teamupdemoac@gmail.com
+        newPassword: '456'
+    VerifyEmailRequest:
+      title: VerifyEmailRequest
+      required:
+        - token
+        - email
+      type: object
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+      example:
+        token: f5627b14925ef63b0bfd11361e349f656efc54aafec5d207da484441a86e31208d90acabaf2ea570
+        email: teamupdemoac@gmail.com
+    UpdateUserRequest:
+      title: UpdateUserRequest
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+      example:
+        name: Chiara
+tags:
+  - name: Movie
+  - name: Activity
+  - name: Auth
+  - name: User

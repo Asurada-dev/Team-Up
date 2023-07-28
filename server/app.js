@@ -57,6 +57,13 @@ app.use('/movie', authenticateUser, moviePageRouter);
 app.use('/activity', authenticateUser, activityPageRouter);
 app.use('/', homePageRouter);
 
+// Swagger API docs
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDoc = YAML.load('../assets/api_docs.yaml');
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
+
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
