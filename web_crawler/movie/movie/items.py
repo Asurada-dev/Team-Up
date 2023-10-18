@@ -25,8 +25,8 @@ class MovieInfo(scrapy.Item):
     title_en = scrapy.Field()
     release_date = scrapy.Field()
     runtime = scrapy.Field()
-    distributor = scrapy.Field()
-    imdb_score = scrapy.Field()
+    director = scrapy.Field()
+    imdb = scrapy.Field()
     img = scrapy.Field()
 
 

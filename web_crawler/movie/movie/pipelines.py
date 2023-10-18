@@ -1,6 +1,5 @@
 import psycopg2
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 
 
@@ -49,7 +48,7 @@ class MovieIdPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        if int(item["id"]) in self.ids_in_database:
+        if item["id"] in self.ids_in_database:
             self.cur.execute(
                 "UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);",
                 (item["id"],),
@@ -161,8 +160,8 @@ class MovieSchedulePipeline:
         if (
             item["movie_id"],
             item["theater_id"],
-            datetime.strptime(item["date"], "%Y-%m-%d").date(),
-            datetime.strptime(item["time"], "%H:%M").time(),
+            item["date"],
+            item["time"],
         ) not in self.date_in_database:
             self.cur.execute(
                 """INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind)
@@ -194,7 +193,7 @@ class MovieInfoPipeline:
             title_en TEXT,
             release_date DATE,
             runtime TEXT,
-            distributor TEXT,
+            director TEXT,
             imdb REAL,
             img TEXT
         );
@@ -209,18 +208,18 @@ class MovieInfoPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        if int(item["movie_id"]) not in self.ids_in_database:
+        if item["movie_id"] not in self.ids_in_database:
             self.cur.execute(
                 """INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime,
-                distributor, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""",
+                director, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""",
                 (
                     item["movie_id"],
                     item["title"],
                     item["title_en"],
                     item["release_date"],
                     item["runtime"],
-                    item["distributor"],
-                    item["imdb_score"],
+                    item["director"],
+                    item["imdb"],
                     item["img"],
                 ),
             )

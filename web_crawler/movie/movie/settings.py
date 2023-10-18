@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 # Scrapy settings for movie project
 #
 # For simplicity, this file contains only settings considered important or
@@ -65,6 +69,12 @@ ROBOTSTXT_OBEY = True
 # ITEM_PIPELINES = {
 #    'movie.pipelines.MoviePipeline': 300,
 # }
+ITEM_PIPELINES = {"scrapy.pipelines.files.FilesPipeline": 1}
+
+FILES_STORE = "s3://team-up-bucket/"
+FILES_STORE_S3_ACL = "public-read"
+AWS_ACCESS_KEY_ID = os.getenv("S3_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("S3_ACCESS_KEY_SECRET")
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
