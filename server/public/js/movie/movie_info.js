@@ -72,10 +72,10 @@ async function pageLoad() {
     ` <h2 class="card-title" id="title">${data.title}</h2>
       <h6 class="card-title" id="title-en">${data.title_en}</h6>
       <p></p>
-      <p class="card-text fs-5" id="release-date">release-date: ${data.release_date}</p>
+      <p class="card-text fs-5" id="release-date">上映時間: ${data.release_date}</p>
       <p class="card-text fs-5" id="runtime">片長: ${data.runtime}</p>
-      <p class="card-text fs-5" id="distributor">distributor: ${data.distributor}</p>
-      <p class="card-text fs-5" id="imdb">imdb: ${data.imdb}</p>`
+      <p class="card-text fs-5" id="distributor">導演: ${data.director}</p>
+      <a href="${data.imdb}"><p class="card-text fs-5" id="imdb">imdb</p></a>`
   );
 
   movieImg.insertAdjacentHTML(
