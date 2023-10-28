@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS token(
 CREATE TABLE IF NOT EXISTS movie (
     id TEXT PRIMARY KEY,
     title TEXT,
-    update_time TIMESTAMP
+    update_time TIMESTAMP,
+    premiere BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS movie_info (

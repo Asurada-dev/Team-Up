@@ -36,10 +36,13 @@ class MovieIdPipeline:
         CREATE TABLE IF NOT EXISTS movie(
           id INT PRIMARY KEY,
           title TEXT,
-          update_time TIMESTAMP
+          update_time TIMESTAMP,
+          premiere BOOLEAN
         );
         """
         )
+
+        self.cur.execute("UPDATE movie SET premiere = FALSE;")
 
         self.cur.execute("SELECT id FROM movie;")
         rows = self.cur.fetchall()
@@ -55,7 +58,8 @@ class MovieIdPipeline:
             )
         else:
             self.cur.execute(
-                "INSERT INTO movie (id, title, update_time) values (%s, %s, CURRENT_TIMESTAMP);",
+                """INSERT INTO movie (id, title, update_time, premiere)
+                values (%s, %s, CURRENT_TIMESTAMP, 'TRUE');""",
                 (
                     item["id"],
                     item["title"],

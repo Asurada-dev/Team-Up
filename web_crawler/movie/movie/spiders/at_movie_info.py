@@ -25,11 +25,12 @@ class MovieInfoSpider(scrapy.Spider):
     def start_requests(self):
         self.connection = Postgres.connect(Postgres)
         self.cur = self.connection.cursor()
-        self.cur.execute("SELECT id FROM movie;")
+        self.cur.execute("SELECT id, premiere FROM movie;")
+        rows = self.cur.fetchall()
 
-        ids = self.cur.fetchall()
-        for i in ids:
-            self.movie_id.append(i[0])
+        for id, is_premiere in rows:
+            if is_premiere:
+                self.movie_id.append(id)
 
         for id in self.movie_id:
             url = f"http://www.atmovies.com.tw/movie/{id}"
