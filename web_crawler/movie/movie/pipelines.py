@@ -113,7 +113,7 @@ class MovieTheaterPipeline:
             name TEXT,
             address TEXT,
             tel TEXT,
-            city_id INT REFERENCES city(id)
+            city_id INT REFERENCES city(id) ON DELETE CASCADE
         );
         """
         )
@@ -123,11 +123,11 @@ class MovieTheaterPipeline:
         self.cur.execute(
             "INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);",
             (
-                item["id"],
+                int(item["id"]),
                 item["name"],
                 item["address"],
                 item["tel"],
-                item["city_id"],
+                int(item["city_id"]),
             ),
         )
         self.connection.commit()
@@ -172,7 +172,7 @@ class MovieSchedulePipeline:
                 values (%s, %s, %s, %s, %s);""",
                 (
                     item["movie_id"],
-                    item["theater_id"],
+                    int(item["theater_id"]),
                     str(item["date"]),
                     str(item["time"]),
                     str(item["kind"]),
@@ -198,7 +198,7 @@ class MovieInfoPipeline:
             release_date DATE,
             runtime TEXT,
             director TEXT,
-            imdb REAL,
+            imdb TEXT,
             img TEXT
         );
         """

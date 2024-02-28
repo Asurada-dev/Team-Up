@@ -25,20 +25,21 @@ CREATE TABLE IF NOT EXISTS token(
 );
 
 CREATE TABLE IF NOT EXISTS movie (
-    id INT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     title TEXT,
-    update_time TIMESTAMP
+    update_time TIMESTAMP,
+    premiere BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS movie_info (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
+    movie_id TEXT REFERENCES movie(id) ON DELETE CASCADE,
     title TEXT,
     title_en TEXT,
     release_date DATE,
     runtime TEXT,
-    distributor TEXT,
-    imdb REAL,
+    director TEXT,
+    imdb TEXT,
     img TEXT
 );
 
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS theater (
 
 CREATE TABLE IF NOT EXISTS movie_schedule (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
+    movie_id TEXT REFERENCES movie(id) ON DELETE CASCADE,
     theater_id INT REFERENCES theater(id),
     date DATE,
     time TIME,
