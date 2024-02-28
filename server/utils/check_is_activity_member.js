@@ -1,11 +1,12 @@
-const pool = require('../db/connectDB');
+const activityModel = require('../models/activity_model');
 
 const checkIsActivityMember = async (activityId, userId) => {
-  const activtyQuery = await pool.query(
-    'SELECT * FROM activity_member WHERE activity_id=$1 AND member_id=$2;',
-    [activityId, userId]
+  const activityMember = await activityModel.getCurrentMemberRole(
+    activityId,
+    userId
   );
-  if (activtyQuery.rows[0]) {
+
+  if (activityMember) {
     return 'joined';
   }
   return 'info';

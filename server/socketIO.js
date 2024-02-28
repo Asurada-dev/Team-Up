@@ -2,6 +2,8 @@ const socketio = require('socket.io');
 const pool = require('./db/connectDB');
 const { formatMessage } = require('./utils');
 
+const activityModel = require('./models/activity_model');
+
 module.exports = (server) => {
   const io = socketio(server);
   const userList = {};
@@ -21,10 +23,8 @@ module.exports = (server) => {
     });
 
     socket.on('chatMessage', async (message) => {
-      await pool.query(
-        'INSERT INTO chatroom_message(activity_id, member_id, message, send_time) VALUES ($1, $2, $3, CURRENT_TIMESTAMP);',
-        [socket.room, socket.userId, message]
-      );
+      await activityModel.sendMessage(socket.room, socket.userId, message);
+
       io.to(socket.room).emit(
         'message',
         formatMessage(socket.userName, message)

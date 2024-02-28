@@ -3,6 +3,8 @@ const CustomError = require('../errors');
 const { isTokenValid } = require('../utils');
 const pool = require('../db/connectDB');
 
+const tokenModel = require('../models/token_model');
+
 const authenticateUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.signedCookies;
 
@@ -20,11 +22,10 @@ const authenticateUser = async (req, res, next) => {
     }
     const payload = isTokenValid(refreshToken);
 
-    const tokenQuery = await pool.query(
-      'SELECT * FROM token WHERE user_id=$1 AND refresh_token=$2',
-      [payload.user.userId, payload.refreshToken]
+    const existingToken = await tokenModel.getTokenByRefreshToken(
+      payload.user.userId,
+      payload.refreshToken
     );
-    const existingToken = tokenQuery.rows[0];
 
     if (!existingToken || !existingToken?.isValid) {
       const message = '?message=Authentication%20Invalid';

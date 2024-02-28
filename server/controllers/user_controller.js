@@ -1,25 +1,21 @@
-const pool = require('../db/connectDB');
-
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
+
+const userModel = require('../models/user_model');
 
 const getCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
 
 const getAllUsers = async (req, res) => {
-  const userQuery = await pool.query('SELECT * FROM users;');
-  const allUsers = userQuery.rows;
+  const allUsers = await userModel.getAllUsers();
   res.status(StatusCodes.OK).json(allUsers);
 };
 
 const getSingleUser = async (req, res) => {
   const { id: userId } = req.params;
 
-  const userQuery = await pool.query('SELECT * FROM users WHERE id=$1;', [
-    userId,
-  ]);
-  const singleUser = userQuery.rows[0];
+  const singleUser = await userModel.getUserById(userId);
 
   if (!singleUser) {
     throw new CustomError.BadRequestError(`No user with id: ${userId}`);
@@ -34,11 +30,7 @@ const updateUser = async (req, res) => {
   if (!name) {
     throw new CustomError.BadRequestError('Please provide all values.');
   }
-
-  await pool.query('UPDATE users SET name=$1 WHERE id=$2;', [
-    name,
-    req.user.userId,
-  ]);
+  await userModel.updateUserProfile(req.user.userId, name);
 
   res
     .status(StatusCodes.OK)
