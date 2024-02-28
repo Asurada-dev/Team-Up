@@ -1,61 +1,59 @@
 import scrapy
-import json
 import re
-import datetime
-from bs4 import BeautifulSoup
 from ..items import MovieSchedule
 from ..pipelines import Postgres
+from datetime import datetime
 
 
 class MovieScheduleSpider(scrapy.Spider):
     name = "movie_schedule"
-    allowed_domains = ["movies.yahoo.com.tw"]
+    allowed_domains = ["www.atmovies.com.tw"]
     custom_settings = {"ITEM_PIPELINES": {"movie.pipelines.MovieSchedulePipeline": 400}}
 
     movie_id = []
+    city_id = []
 
     def start_requests(self):
         self.connection = Postgres.connect(Postgres)
         self.cur = self.connection.cursor()
+
         self.cur.execute("SELECT id FROM movie;")
+        movie_ids = self.cur.fetchall()
+        for id in movie_ids:
+            self.movie_id.append(id[0])
 
-        ids = self.cur.fetchall()
-        for i in ids:
-            self.movie_id.append(i[0])
+        self.cur.execute("SELECT id FROM city;")
+        city_ids = self.cur.fetchall()
+        for id in city_ids:
+            self.city_id.append(id[0])
 
-        today = datetime.datetime.today()
-        date_list = [
-            today,
-            today + datetime.timedelta(days=1),
-            today + datetime.timedelta(days=2),
-        ]
-
-        for id in self.movie_id:
-            for date in date_list:
-                url = f"""https://movies.yahoo.com.tw/ajax/pc/get_schedule_by_movie?
-                movie_id={id}&date={date.strftime('%Y-%m-%d')}"""
-                yield scrapy.Request(url=url, callback=self.parse, meta={"id": id})
+        for movie in self.movie_id:
+            for city in self.city_id:
+                formatted_city_id = f"{city:02}"
+                url = (
+                    f"http://www.atmovies.com.tw/showtime/{movie}/a{formatted_city_id}/"
+                )
+                yield scrapy.Request(url=url, callback=self.parse, meta={"id": movie})
 
     def parse(self, response):
         item = MovieSchedule()
 
-        json_data = json.loads(response.text)
-        soup = BeautifulSoup(json_data["view"], "lxml")
-        html_element = soup.find_all(
-            "ul", attrs={"data-theater_name": re.compile(".*")}
-        )
+        show_time = response.css('[id="filmShowtimeBlock"]')
+        theater_list = show_time.css("ul")
 
-        for li in html_element:
-            theater = li.find("li", attrs={"class": "adds"})
-            info = li.find_all(class_="gabtn")
+        for theater in theater_list:
+            theater_link = theater.css("li.theaterTitle > a::attr(href)").get()
+            theater_id = re.search(r"/t(\w+)/", theater_link).group(1)
 
-            for i in info:
-                item["movie_id"] = response.meta["id"]
+            schedule_list = theater.css("li")
 
-                a = re.search('id=(.*)">', str(theater.find("a")))
-                item["theater_id"] = int(a.group(1))
-
-                item["date"] = i["value"].split(" ")[0]
-                item["time"] = i["data-movie_time"]
-                item["kind"] = i["data-movie_type"]
-                yield (item)
+            for schedule in schedule_list:
+                time = schedule.css("::text").get()
+                if re.match(r"^\d{2}：\d{2}$", time):
+                    formatted_time = datetime.strptime(time, "%H：%M").time()
+                    item["movie_id"] = response.meta["id"]
+                    item["date"] = datetime.now().date()
+                    item["time"] = formatted_time
+                    item["theater_id"] = theater_id
+                    item["kind"] = "Default"
+                    yield (item)
