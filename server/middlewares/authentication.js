@@ -1,9 +1,9 @@
 require('dotenv').config();
 const CustomError = require('../errors');
 const { isTokenValid } = require('../utils');
-const pool = require('../db/connectDB');
 
 const tokenModel = require('../models/token_model');
+const { attachCookiesToResponse } = require('../utils');
 
 const authenticateUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.signedCookies;
@@ -27,17 +27,13 @@ const authenticateUser = async (req, res, next) => {
       payload.refreshToken
     );
 
-    if (!existingToken || !existingToken?.isValid) {
+    if (!existingToken || !existingToken?.is_valid) {
       const message = '?message=Authentication%20Invalid';
       const loginPage = process.env.ORIGIN + '/auth/login' + message;
       return res.redirect(loginPage);
     }
 
-    attachCookiesToResponse({
-      res,
-      user: payload.user,
-      refreshToken: existingToken.refresh_token,
-    });
+    attachCookiesToResponse(res, payload.user, existingToken.refresh_token);
 
     req.user = payload.user;
     next();
