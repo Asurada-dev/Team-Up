@@ -109,7 +109,7 @@ class MovieTheaterPipeline:
         self.cur.execute(
             """
         CREATE TABLE IF NOT EXISTS theater (
-            id INT PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             name TEXT,
             address TEXT,
             tel TEXT,
@@ -123,7 +123,7 @@ class MovieTheaterPipeline:
         self.cur.execute(
             "INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);",
             (
-                int(item["id"]),
+                item["id"],
                 item["name"],
                 item["address"],
                 item["tel"],
@@ -145,7 +145,7 @@ class MovieSchedulePipeline:
         CREATE TABLE IF NOT EXISTS movie_schedule (
             id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             movie_id INT REFERENCES movie(id) ON DELETE CASCADE,
-            theater_id INT REFERENCES theater(id),
+            theater_id TEXT REFERENCES theater(id),
             date DATE,
             time TIME,
             kind TEXT
@@ -172,7 +172,7 @@ class MovieSchedulePipeline:
                 values (%s, %s, %s, %s, %s);""",
                 (
                     item["movie_id"],
-                    int(item["theater_id"]),
+                    str(item["theater_id"]),
                     str(item["date"]),
                     str(item["time"]),
                     str(item["kind"]),

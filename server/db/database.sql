@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS movie_info (
 CREATE TABLE IF NOT EXISTS city (id INT PRIMARY KEY, name TEXT);
 
 CREATE TABLE IF NOT EXISTS theater (
-    id INT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     name TEXT,
     address TEXT,
     tel TEXT,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS theater (
 CREATE TABLE IF NOT EXISTS movie_schedule (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     movie_id TEXT REFERENCES movie(id) ON DELETE CASCADE,
-    theater_id INT REFERENCES theater(id),
+    theater_id TEXT REFERENCES theater(id),
     date DATE,
     time TIME,
     kind TEXT
