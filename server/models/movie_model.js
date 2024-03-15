@@ -39,7 +39,7 @@ const getMovieSchedule = async (movieId, date) => {
         JOIN movie_schedule ON movie.id=movie_schedule.movie_id 
         JOIN theater ON movie_schedule.theater_id=theater.id 
         JOIN city ON theater.city_id=city.id
-        WHERE movie_id=$1 AND date=$2;`,
+        WHERE movie_id=$1 AND date=$2 ORDER BY movie_schedule.time;`,
     [movieId, date]
   );
   return movieQuery.rows;
