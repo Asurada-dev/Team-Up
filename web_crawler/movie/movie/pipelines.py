@@ -51,21 +51,24 @@ class MovieIdPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        if item["id"] in self.ids_in_database:
-            self.cur.execute(
-                "UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);",
-                (item["id"],),
-            )
-        else:
-            self.cur.execute(
-                """INSERT INTO movie (id, title, update_time, premiere)
-                values (%s, %s, CURRENT_TIMESTAMP, 'TRUE');""",
-                (
-                    item["id"],
-                    item["title"],
-                ),
-            )
-        self.connection.commit()
+        try:
+            if item["id"] in self.ids_in_database:
+                self.cur.execute(
+                    "UPDATE movie SET update_time=CURRENT_TIMESTAMP WHERE id=(%s);",
+                    (item["id"],),
+                )
+            else:
+                self.cur.execute(
+                    """INSERT INTO movie (id, title, update_time, premiere)
+                    values (%s, %s, CURRENT_TIMESTAMP, 'TRUE');""",
+                    (
+                        item["id"],
+                        item["title"],
+                    ),
+                )
+            self.connection.commit()
+        except Exception:
+            self.cur.execute("rollback")
 
         return item
 
@@ -89,14 +92,17 @@ class MovieCityPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(
-            "INSERT INTO city (id, name) values (%s, %s);",
-            (
-                item["id"],
-                item["name"],
-            ),
-        )
-        self.connection.commit()
+        try:
+            self.cur.execute(
+                "INSERT INTO city (id, name) values (%s, %s);",
+                (
+                    item["id"],
+                    item["name"],
+                ),
+            )
+            self.connection.commit()
+        except Exception:
+            self.cur.execute("rollback")
         return item
 
 
@@ -120,17 +126,20 @@ class MovieTheaterPipeline:
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cur.execute(
-            "INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);",
-            (
-                item["id"],
-                item["name"],
-                item["address"],
-                item["tel"],
-                int(item["city_id"]),
-            ),
-        )
-        self.connection.commit()
+        try:
+            self.cur.execute(
+                "INSERT INTO theater (id, name, address, tel, city_id) values (%s, %s, %s, %s, %s);",
+                (
+                    item["id"],
+                    item["name"],
+                    item["address"],
+                    item["tel"],
+                    int(item["city_id"]),
+                ),
+            )
+            self.connection.commit()
+        except Exception:
+            self.cur.execute("rollback")
         return item
 
 
@@ -167,18 +176,21 @@ class MovieSchedulePipeline:
             item["date"],
             item["time"],
         ) not in self.date_in_database:
-            self.cur.execute(
-                """INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind)
-                values (%s, %s, %s, %s, %s);""",
-                (
-                    item["movie_id"],
-                    str(item["theater_id"]),
-                    str(item["date"]),
-                    str(item["time"]),
-                    str(item["kind"]),
-                ),
-            )
-            self.connection.commit()
+            try:
+                self.cur.execute(
+                    """INSERT INTO movie_schedule (movie_id, theater_id, date, time, kind)
+                    values (%s, %s, %s, %s, %s);""",
+                    (
+                        item["movie_id"],
+                        item["theater_id"],
+                        str(item["date"]),
+                        str(item["time"]),
+                        str(item["kind"]),
+                    ),
+                )
+                self.connection.commit()
+            except Exception:
+                self.cur.execute("rollback")
         return item
 
 
@@ -213,19 +225,22 @@ class MovieInfoPipeline:
 
     def process_item(self, item, spider):
         if item["movie_id"] not in self.ids_in_database:
-            self.cur.execute(
-                """INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime,
-                director, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""",
-                (
-                    item["movie_id"],
-                    item["title"],
-                    item["title_en"],
-                    item["release_date"],
-                    item["runtime"],
-                    item["director"],
-                    item["imdb"],
-                    item["img"],
-                ),
-            )
+            try:
+                self.cur.execute(
+                    """INSERT INTO movie_info (movie_id, title, title_en, release_date, runtime,
+                    director, imdb, img) values (%s, %s, %s, %s, %s, %s, %s, %s );""",
+                    (
+                        item["movie_id"],
+                        item["title"],
+                        item["title_en"],
+                        item["release_date"],
+                        item["runtime"],
+                        item["director"],
+                        item["imdb"],
+                        item["img"],
+                    ),
+                )
+            except Exception:
+                self.cur.execute("rollback")
             self.connection.commit()
         return item
